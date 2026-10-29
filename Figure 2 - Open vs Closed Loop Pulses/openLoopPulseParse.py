@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1. SPECIFY YOUR FILE NAME HERE
-input_file_path = "CoolTerm Capture (elec_35_25_15C) 2026-09-03 19-00-03-969 - Copy.txt"
+input_file_path = "open_loop_elec_35_25_15C.txt"
 
 columns = [
     'Timestamp', 'Temperature_Setpoint_C', 'Current_mA', 'Temperature_C', 
