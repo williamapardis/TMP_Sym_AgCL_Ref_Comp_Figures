@@ -1,6 +1,8 @@
 # Figure 2. Open vs Closed Loop Pulses
 
 ## Data Process
+Plotting of time series for experimental overview (plotTimeSeries.py)
+
 Raw data files with distinct headers parsed to JSON pulse structure with unified properties
 
 Compare open vs closed loop pulses (CP and T pulses)
@@ -9,4 +11,5 @@ Compare open vs closed loop pulses (CP and T pulses)
 - temperature repeatability
 
 ## Time Series of Exp.
+Open and closed loop pulses were evaluated in independent experiments. 
 ![Alt Text](temperature_time_series.png)
