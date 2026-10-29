@@ -7,3 +7,6 @@ Compare open vs closed loop pulses (CP and T pulses)
 - power
 - reproducibility
 - temperature repeatability
+
+## Time Series of Exp.
+![Alt Text](temperature_time_series.png)
