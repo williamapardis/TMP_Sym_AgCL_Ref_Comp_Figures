@@ -147,20 +147,28 @@ def parse_pulses(file_path: str, loop_type: str) -> list[Pulse]:
 # 3. Ambient Temperature Calculation & Filtering
 # ==========================================
 def calculate_ambient_temperatures(
-    pulses: list[Pulse], time_window_s: tuple[float, float]
+    pulses: list[Pulse], time_window_s
 ) -> list[Pulse]:
-    """Calculates ambient temperature as the mean temperature within a relative time window [t_start, t_end].
+    """Calculates ambient temperature as mean temp within a relative window [t_start, t_end].
 
-    Updates the calculated_ambient_temp_c attribute of each Pulse.
+    time_window_s can be:
+      - A single tuple (t_start, t_end)
+      - A dict mapping time_off_s -> (t_start, t_end)
     """
-    t_start, t_end = time_window_s
-
     for p in pulses:
         df = p.data
         t_col = "Timestamp" if p.loop_type == "open-loop" else "datetime"
         temp_col = (
             "Temperature_C" if p.loop_type == "open-loop" else "temperature"
         )
+
+        if isinstance(time_window_s, dict):
+            off_key = min(
+                time_window_s.keys(), key=lambda k: abs(k - p.time_off_s)
+            )
+            t_start, t_end = time_window_s[off_key]
+        else:
+            t_start, t_end = time_window_s
 
         time_vals = df[t_col]
         if pd.api.types.is_numeric_dtype(time_vals):
@@ -170,7 +178,6 @@ def calculate_ambient_temperatures(
                 pd.to_datetime(time_vals) - pd.to_datetime(time_vals.iloc[0])
             ).dt.total_seconds()
 
-        # Mask data inside specified time window
         window_mask = (rel_time >= t_start) & (rel_time <= t_end)
         window_temps = df.loc[window_mask, temp_col]
 
@@ -179,7 +186,7 @@ def calculate_ambient_temperatures(
         else:
             p.calculated_ambient_temp_c = float(df[temp_col].iloc[-1])
             print(
-                f"[{p.loop_type.upper()}] Warning: Pulse #{p.pulse_index} window [{t_start}, {t_end}]s outside bounds. Used final sample."
+                f"[{p.loop_type.upper()}] Warning: Pulse #{p.pulse_index} window [{t_start:.1f}, {t_end:.1f}]s outside bounds. Used final sample."
             )
 
     return pulses
@@ -195,7 +202,7 @@ def filter_pulses_by_ambient_setpoint_delta(
     for p in pulses:
         if p.calculated_ambient_temp_c is None:
             raise ValueError(
-                f"Pulse #{p.pulse_index} has no calculated ambient temperature. Run calculate_ambient_temperatures first."
+                f"Pulse #{p.pulse_index} has no calculated ambient temperature."
             )
 
         delta = abs(p.calculated_ambient_temp_c - p.ambient_temp_setpoint_c)
@@ -215,7 +222,7 @@ def filter_pulses_by_ambient_setpoint_delta(
 
 
 # ==========================================
-# 4. Sophisticated Duration Filter (< 90% of expected)
+# 4. Duration Filter (< 90% of expected)
 # ==========================================
 def filter_pulses_by_duration(
     pulses: list[Pulse], min_duration_ratio: float = 0.90
@@ -258,10 +265,10 @@ def filter_pulses_by_duration(
 def plot_pulses_overlay(
     pulses: list[Pulse],
     removed_pulses: list[Pulse] = None,
-    time_window_s: tuple[float, float] = None,
+    time_window_s=None,
     save_path: str = None,
 ):
-    """Overlays pulses starting from relative time t = 0 and highlights ambient evaluation window."""
+    """Overlays pulses starting from relative time t = 0 and highlights ambient calculation window(s)."""
     if not pulses and not removed_pulses:
         return
 
@@ -327,16 +334,25 @@ def plot_pulses_overlay(
                 linewidth=1.5,
             )
 
-    # Highlight ambient measurement window
+    # Highlight ambient measurement window(s) on temperature subplot
     if time_window_s:
-        ax1.axvspan(
-            time_window_s[0],
-            time_window_s[1],
-            color="gold",
-            alpha=0.25,
-            label=f"Ambient Window ({time_window_s[0]}-{time_window_s[1]}s)",
-        )
-        #ax1.legend(loc="upper right", fontsize="small")
+        if isinstance(time_window_s, dict):
+            for off_dur, (w_start, w_end) in time_window_s.items():
+                ax1.axvspan(
+                    w_start,
+                    w_end,
+                    color="gold",
+                    alpha=0.2,
+                    label=f"Window ({off_dur:g}s OFF: {w_start:.0f}-{w_end:.0f}s)",
+                )
+        else:
+            ax1.axvspan(
+                time_window_s[0],
+                time_window_s[1],
+                color="gold",
+                alpha=0.25,
+                label=f"Ambient Window ({time_window_s[0]:.0f}-{time_window_s[1]:.0f}s)",
+            )
 
     ax1.set_ylabel("Temperature (°C)")
     ax1.set_title(
@@ -362,14 +378,16 @@ if __name__ == "__main__":
     open_loop_file = "open_loop_elec_35_25_15C.txt"
     closed_loop_file = "closed_loop_elec_35_25_15C.txt"
 
-    # Time windows for off-time ambient calculation
-    open_loop_window_s = (90.0, 100.0)
-    closed_loop_window_s = (220.0, 230.0)
+    # MANUAL WINDOW SELECTION
+    open_loop_window_map = {
+        15.0: (90.0, 100.0),   # E.g., for 15s OFF pulses
+        30.0: (140.0, 150.0),  # E.g., for 30s OFF pulses
+        60.0: (190.0, 200.0),  # E.g., for 60s OFF pulses
+    }
 
-    # Allowed threshold difference |T_calc - T_setpoint| (°C)
+    closed_loop_window_s = (220.0, 240.0)
+
     ambient_delta_threshold_c = 1.0
-
-    # Minimum duration threshold (90% of time_on_s + time_off_s)
     min_duration_ratio = 0.90
 
     # Step 1: Parse Files
@@ -381,14 +399,16 @@ if __name__ == "__main__":
         closed_loop_file, loop_type="closed-loop"
     )
 
-    plot_pulses_overlay(open_loop_pulses,
-        save_path="open_loop_overlay_raw.png")
-    plot_pulses_overlay(closed_loop_pulses,
-        save_path="closed_loop_overlay_raw.png")
+    plot_pulses_overlay(
+        open_loop_pulses, save_path="open_loop_overlay_raw.png"
+    )
+    plot_pulses_overlay(
+        closed_loop_pulses, save_path="closed_loop_overlay_raw.png"
+    )
 
-    # Step 2: Calculate Ambient Temperatures
+    # Step 2: Calculate Ambient Temperatures using configured windows
     open_loop_pulses = calculate_ambient_temperatures(
-        open_loop_pulses, time_window_s=open_loop_window_s
+        open_loop_pulses, time_window_s=open_loop_window_map
     )
     closed_loop_pulses = calculate_ambient_temperatures(
         closed_loop_pulses, time_window_s=closed_loop_window_s
@@ -424,14 +444,14 @@ if __name__ == "__main__":
         )
     )
 
-    # Step 5: Plot & Save Overlays
+    # Step 5: Plot & Save Overlays WITH Window Shading
     all_removed_open = open_loop_dur_removed + removed_open_ambient
     all_removed_closed = closed_loop_dur_removed + removed_closed_ambient
 
     plot_pulses_overlay(
         clean_open_pulses,
         removed_pulses=all_removed_open,
-        time_window_s=open_loop_window_s,
+        time_window_s=open_loop_window_map,
         save_path="open_loop_overlay_removed.png",
     )
 
@@ -448,7 +468,11 @@ if __name__ == "__main__":
         clean_closed_pulses, "closed_loop_pulses_filtered.json"
     )
 
-    plot_pulses_overlay(clean_open_pulses,
-        save_path="open_loop_overlay_filtered.png")
-    plot_pulses_overlay(clean_closed_pulses,
-        save_path="closed_loop_overlay_filtered.png")
+    plot_pulses_overlay(
+        clean_open_pulses,
+        save_path="open_loop_overlay_filtered.png",
+    )
+    plot_pulses_overlay(
+        clean_closed_pulses,
+        save_path="closed_loop_overlay_filtered.png",
+    )

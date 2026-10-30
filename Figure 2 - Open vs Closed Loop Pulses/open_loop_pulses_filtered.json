@@ -6,7 +6,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.642583333333334,
+            "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -484,7 +484,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.665363636363637,
+            "calculated_ambient_temp_c": 24.649545454545454,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -1145,7 +1145,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.650181818181817,
+            "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -1482,7 +1482,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.631545454545456,
+            "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -1960,7 +1960,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.688909090909092,
+            "calculated_ambient_temp_c": 24.65381818181818,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -2615,7 +2615,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.666181818181823,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -2952,7 +2952,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64690909090909,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -3430,7 +3430,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.775545454545455,
+            "calculated_ambient_temp_c": 24.673333333333336,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -4082,7 +4082,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.70809090909091,
+            "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -4416,7 +4416,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.684750000000005,
+            "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -4897,7 +4897,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.9514,
+            "calculated_ambient_temp_c": 24.718999999999998,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -5549,7 +5549,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.677636363636363,
+            "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -5889,7 +5889,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.642090909090907,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -6364,7 +6364,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.661727272727273,
+            "calculated_ambient_temp_c": 24.65090909090909,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -7013,7 +7013,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.646727272727276,
+            "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -7350,7 +7350,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.627181818181818,
+            "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -7831,7 +7831,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.684916666666666,
+            "calculated_ambient_temp_c": 24.64818181818182,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -8492,7 +8492,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.660363636363638,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -8832,7 +8832,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64081818181818,
+            "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -9307,7 +9307,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.773363636363637,
+            "calculated_ambient_temp_c": 24.667636363636362,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -9962,7 +9962,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.696454545454547,
+            "calculated_ambient_temp_c": 24.695,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -10299,7 +10299,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.68054545454546,
+            "calculated_ambient_temp_c": 24.695,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -10774,7 +10774,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.937454545454546,
+            "calculated_ambient_temp_c": 24.838181818181816,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -11432,7 +11432,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.08236363636364,
+            "calculated_ambient_temp_c": 34.086000000000006,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -12096,7 +12096,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.22233333333333,
+            "calculated_ambient_temp_c": 34.227,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -12439,7 +12439,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.312799999999996,
+            "calculated_ambient_temp_c": 34.313,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -12914,7 +12914,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.50572727272727,
+            "calculated_ambient_temp_c": 34.38891666666667,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -13572,7 +13572,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.45227272727273,
+            "calculated_ambient_temp_c": 34.445,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -13915,7 +13915,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.45954545454546,
+            "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -14393,7 +14393,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.7008,
+            "calculated_ambient_temp_c": 34.49709090909091,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -15051,7 +15051,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.46754545454545,
+            "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -15394,7 +15394,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.446999999999996,
+            "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -15875,7 +15875,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.48372727272727,
+            "calculated_ambient_temp_c": 34.457363636363645,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -16533,7 +16533,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.45736363636363,
+            "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -16867,7 +16867,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.44718181818182,
+            "calculated_ambient_temp_c": 34.453,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -17342,7 +17342,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.50981818181818,
+            "calculated_ambient_temp_c": 34.46366666666667,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -18009,7 +18009,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.47881818181817,
+            "calculated_ambient_temp_c": 34.477,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -18352,7 +18352,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.4660909090909,
+            "calculated_ambient_temp_c": 34.469,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -18827,7 +18827,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.584399999999995,
+            "calculated_ambient_temp_c": 34.49127272727273,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -19482,7 +19482,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.51981818181819,
+            "calculated_ambient_temp_c": 34.523,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -19816,7 +19816,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.504363636363635,
+            "calculated_ambient_temp_c": 34.523,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -20291,7 +20291,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 25.73081818181818,
+            "calculated_ambient_temp_c": 25.4618,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -20940,7 +20940,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 25.21972727272727,
+            "calculated_ambient_temp_c": 25.211,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -21277,7 +21277,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.966916666666666,
+            "calculated_ambient_temp_c": 24.992,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -21752,7 +21752,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 25.105909090909087,
+            "calculated_ambient_temp_c": 24.873666666666665,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -22413,7 +22413,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.781000000000002,
+            "calculated_ambient_temp_c": 24.789,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -22750,7 +22750,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.703666666666667,
+            "calculated_ambient_temp_c": 24.734,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -23222,7 +23222,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.703090909090907,
+            "calculated_ambient_temp_c": 24.69427272727273,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -23874,7 +23874,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.67972727272727,
+            "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -24211,7 +24211,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64890909090909,
+            "calculated_ambient_temp_c": 24.672,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -24692,7 +24692,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.696666666666673,
+            "calculated_ambient_temp_c": 24.66690909090909,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -25341,7 +25341,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.672,
+            "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -25678,7 +25678,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64818181818182,
+            "calculated_ambient_temp_c": 24.672,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -26159,7 +26159,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.77209090909091,
+            "calculated_ambient_temp_c": 24.679800000000004,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -26811,7 +26811,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.708818181818184,
+            "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -27151,7 +27151,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 15.686545454545454,
+            "calculated_ambient_temp_c": 15.672,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -27485,7 +27485,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 15.346727272727275,
+            "calculated_ambient_temp_c": 15.359,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -27954,7 +27954,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 15.362272727272728,
+            "calculated_ambient_temp_c": 15.112000000000002,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -28609,7 +28609,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.99133333333333,
+            "calculated_ambient_temp_c": 14.992,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -28949,7 +28949,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.883727272727272,
+            "calculated_ambient_temp_c": 14.914,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -29424,7 +29424,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.871800000000002,
+            "calculated_ambient_temp_c": 14.866272727272728,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -30076,7 +30076,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.8472,
+            "calculated_ambient_temp_c": 14.852,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -30413,7 +30413,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.802333333333335,
+            "calculated_ambient_temp_c": 14.836,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -30894,7 +30894,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.851545454545457,
+            "calculated_ambient_temp_c": 14.825818181818182,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -31549,7 +31549,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.829454545454546,
+            "calculated_ambient_temp_c": 14.836,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -31892,7 +31892,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.799909090909091,
+            "calculated_ambient_temp_c": 14.828,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -32373,7 +32373,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 14.934333333333335,
+            "calculated_ambient_temp_c": 14.830666666666668,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -33028,7 +33028,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.065727272727273,
+            "calculated_ambient_temp_c": 24.118454545454544,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -33692,7 +33692,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.31145454545455,
+            "calculated_ambient_temp_c": 24.305,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -34029,7 +34029,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.4068,
+            "calculated_ambient_temp_c": 24.414,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -34498,7 +34498,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.552454545454545,
+            "calculated_ambient_temp_c": 24.51381818181818,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -35162,7 +35162,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.5652,
+            "calculated_ambient_temp_c": 24.562,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -35490,7 +35490,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.57872727272727,
+            "calculated_ambient_temp_c": 24.586,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -35971,7 +35971,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.727999999999998,
+            "calculated_ambient_temp_c": 24.613363636363637,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -36629,7 +36629,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.6632,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -36966,7 +36966,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.648833333333332,
+            "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -37438,7 +37438,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.922545454545457,
+            "calculated_ambient_temp_c": 24.68041666666667,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -38102,7 +38102,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64472727272727,
+            "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -38439,7 +38439,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.612727272727273,
+            "calculated_ambient_temp_c": 24.625,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -38914,7 +38914,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64418181818182,
+            "calculated_ambient_temp_c": 24.6266,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -39569,7 +39569,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.632333333333335,
+            "calculated_ambient_temp_c": 24.633,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -39903,7 +39903,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.617000000000004,
+            "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -40378,7 +40378,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.673666666666673,
+            "calculated_ambient_temp_c": 24.637363636363634,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -41030,7 +41030,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.650181818181817,
+            "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -41367,7 +41367,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.633666666666667,
+            "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -41842,7 +41842,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.814636363636364,
+            "calculated_ambient_temp_c": 25.086583333333337,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -42503,7 +42503,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.12820000000001,
+            "calculated_ambient_temp_c": 34.13863636363637,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -43167,7 +43167,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.23272727272727,
+            "calculated_ambient_temp_c": 34.234,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -43507,7 +43507,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.42966666666667,
+            "calculated_ambient_temp_c": 34.374272727272725,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -44174,7 +44174,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.41327272727272,
+            "calculated_ambient_temp_c": 34.414,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -44517,7 +44517,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.424,
+            "calculated_ambient_temp_c": 34.43,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -44989,7 +44989,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.49133333333334,
+            "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -45329,7 +45329,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.4865,
+            "calculated_ambient_temp_c": 34.492,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -45795,7 +45795,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.715181818181826,
+            "calculated_ambient_temp_c": 34.51950000000001,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -46450,7 +46450,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.485454545454544,
+            "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -46784,7 +46784,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.4578,
+            "calculated_ambient_temp_c": 34.477,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -47593,7 +47593,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.45433333333333,
+            "calculated_ambient_temp_c": 34.469,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -48071,7 +48071,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.49533333333333,
+            "calculated_ambient_temp_c": 34.492,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -48414,7 +48414,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "35",
-            "calculated_ambient_temp_c": 34.48345454545454,
+            "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -48886,7 +48886,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 25.491454545454545,
+            "calculated_ambient_temp_c": 25.3464,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -49538,7 +49538,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 25.098363636363636,
+            "calculated_ambient_temp_c": 25.094,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -49869,7 +49869,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.80425,
+            "calculated_ambient_temp_c": 24.805,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -50200,7 +50200,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.734272727272728,
+            "calculated_ambient_temp_c": 24.758,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -50672,7 +50672,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.963727272727272,
+            "calculated_ambient_temp_c": 24.7644,
             "max_current_a": 0.925
         },
         "time_series": {
@@ -51321,7 +51321,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.70809090909091,
+            "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -51658,7 +51658,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.661818181818184,
+            "calculated_ambient_temp_c": 24.687,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -52136,7 +52136,7 @@
             "time_on_s": 60.0,
             "time_off_s": 150.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.671727272727274,
+            "calculated_ambient_temp_c": 24.67266666666667,
             "max_current_a": 0.358
         },
         "time_series": {
@@ -52779,7 +52779,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.6672,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -53107,7 +53107,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.64016666666667,
+            "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.462
         },
         "time_series": {
@@ -53588,7 +53588,7 @@
             "time_on_s": 15.0,
             "time_off_s": 90.0,
             "ambient_temp_setpoint_c": "25",
-            "calculated_ambient_temp_c": 24.666181818181823,
+            "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
         "time_series": {
@@ -53925,7 +53925,7 @@
             "time_on_s": 30.0,
             "time_off_s": 120.0,
             "ambient_temp_setpoint_c": "15",
-            "calculated_ambient_temp_c": 15.245636363636367,
+            "calculated_ambient_temp_c": 15.266,
             "max_current_a": 0.654
         },
         "time_series": {
