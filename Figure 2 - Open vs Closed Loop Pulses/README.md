@@ -1,10 +1,5 @@
 # Figure 2. Open vs Closed Loop Pulses
 
-## Table of Contents
-- [Data Process](#Data-Process)
-- [Time Series of Exp.](#Time-Series-of-Exp.)
-
-
 ## Data Process
 Plotting of time series for experimental overview (plotTimeSeries.py)
 
