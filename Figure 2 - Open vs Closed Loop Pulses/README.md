@@ -15,7 +15,6 @@ Open and closed loop pulses were evaluated in independent experiments. Closed lo
 ![Alt Text](temperature_time_series.png)
 
 ## Parsed Pulses
-239 open_loop_pulses and 800 closed_loop_pulses.
 <p float="left">
   <img src="closed_loop_overlay_raw.png" width="49%" />
   <img src="open_loop_overlay_raw.png" width="49%" />
@@ -23,14 +22,13 @@ Open and closed loop pulses were evaluated in independent experiments. Closed lo
 
 
 ## Removed Pulses
-239 open_loop_pulses and 800 closed_loop_pulses.
+removed pulses that were shorter than defined on off duration and where the measured temperature deviated from the temperature setpoint.
 <p float="left">
   <img src="closed_loop_overlay_removed.png" width="49%" />
   <img src="open_loop_overlay_removed.png" width="49%" />
 </p>
 
 ## Remaining Pulses
-239 open_loop_pulses and 800 closed_loop_pulses.
 <p float="left">
   <img src="closed_loop_overlay_filtered.png" width="49%" />
   <img src="open_loop_overlay_filtered.png" width="49%" />
