@@ -14,6 +14,7 @@ Compare open vs closed loop pulses (CP and T pulses)
 Open and closed loop pulses were evaluated in independent experiments. Closed loop exp. ran for a duration of ~48hrs and open loop ~17hrs. 
 ![Alt Text](temperature_time_series.png)
 
+# Parsing and Filtering Pulses
 ## Parsed Pulses
 <p float="left">
   <img src="closed_loop_overlay_raw.png" width="49%" />
