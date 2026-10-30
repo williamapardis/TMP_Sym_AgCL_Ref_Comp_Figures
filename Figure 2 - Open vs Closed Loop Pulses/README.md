@@ -16,6 +16,6 @@ Open and closed loop pulses were evaluated in independent experiments. Closed lo
 
 ## Parsed Pulses
 <p float="left">
-  <img src="closed_loop_pulses.png" width="49%" />
-  <img src="open_loop_pulses.png" width="49%" />
+  <img src="closed_loop_overlay.png" width="49%" />
+  <img src="open_loop_overlay.png" width="49%" />
 </p>
