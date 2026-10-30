@@ -336,7 +336,7 @@ def plot_pulses_overlay(
             alpha=0.25,
             label=f"Ambient Window ({time_window_s[0]}-{time_window_s[1]}s)",
         )
-        ax1.legend(loc="upper right", fontsize="small")
+        #ax1.legend(loc="upper right", fontsize="small")
 
     ax1.set_ylabel("Temperature (°C)")
     ax1.set_title(
