@@ -15,6 +15,7 @@ Open and closed loop pulses were evaluated in independent experiments. Closed lo
 ![Alt Text](temperature_time_series.png)
 
 ## Parsed Pulses
+239 open_loop_pulses and 800 closed_loop_pulses.
 <p float="left">
   <img src="closed_loop_overlay.png" width="49%" />
   <img src="open_loop_overlay.png" width="49%" />
