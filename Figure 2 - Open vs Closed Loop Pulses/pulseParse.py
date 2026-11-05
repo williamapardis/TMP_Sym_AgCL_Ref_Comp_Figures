@@ -19,6 +19,21 @@ class Pulse:
     data: pd.DataFrame
     calculated_ambient_temp_c: float = None  # Saved to JSON metadata
 
+    def __post_init__(self):
+        """Ensures numeric metadata fields are strictly float types regardless of source data."""
+        self.time_on_s = float(self.time_on_s)
+        self.time_off_s = float(self.time_off_s)
+        self.ambient_temp_setpoint_c = (
+            float(self.ambient_temp_setpoint_c)
+            if self.ambient_temp_setpoint_c is not None
+            else None
+        )
+        self.max_current_a = float(self.max_current_a)
+        if self.calculated_ambient_temp_c is not None:
+            self.calculated_ambient_temp_c = float(
+                self.calculated_ambient_temp_c
+            )
+
     def to_dict(self) -> dict:
         """Converts metadata and DataFrame time series to a JSON-serializable dictionary."""
         return {
@@ -114,16 +129,16 @@ def parse_pulses(file_path: str, loop_type: str) -> list[Pulse]:
 
             if loop_type == "open-loop":
                 ts_data = pulse_df[["Timestamp", "Temperature_C", "E_mV"]]
-                time_on_s = pulse_df["on_period_ms"].iloc[0] / 1000.0
-                time_off_s = pulse_df["off_period_ms"].iloc[0] / 1000.0
-                temp_sp = pulse_df["Temperature_Setpoint_C"].iloc[0]
-                max_curr_a = pulse_df["Current_mA"].iloc[0] / 1000.0
+                time_on_s = float(pulse_df["on_period_ms"].iloc[0]) / 1000.0
+                time_off_s = float(pulse_df["off_period_ms"].iloc[0]) / 1000.0
+                temp_sp = float(pulse_df["Temperature_Setpoint_C"].iloc[0])
+                max_curr_a = float(pulse_df["Current_mA"].iloc[0]) / 1000.0
             else:
                 ts_data = pulse_df[["datetime", "temperature", "AgCl CP"]]
-                time_on_s = pulse_df["time on"].iloc[0]
-                time_off_s = pulse_df["time off"].iloc[0]
-                temp_sp = pulse_df["temperature setpoint"].iloc[0]
-                max_curr_a = 925 / 1000.0
+                time_on_s = float(pulse_df["time on"].iloc[0])
+                time_off_s = float(pulse_df["time off"].iloc[0])
+                temp_sp = float(pulse_df["temperature setpoint"].iloc[0])
+                max_curr_a = 925.0 / 1000.0
 
             pulse = Pulse(
                 pulse_index=pulse_counter,
@@ -152,8 +167,8 @@ def calculate_ambient_temperatures(
     """Calculates ambient temperature as mean temp within a relative window [t_start, t_end].
 
     time_window_s can be:
-      - A single tuple (t_start, t_end)
-      - A dict mapping time_off_s -> (t_start, t_end)
+    - A single tuple (t_start, t_end)
+    - A dict mapping time_off_s -> (t_start, t_end)
     """
     for p in pulses:
         df = p.data
@@ -380,7 +395,7 @@ if __name__ == "__main__":
 
     # MANUAL WINDOW SELECTION
     open_loop_window_map = {
-        15.0: (90.0, 100.0),   # E.g., for 15s OFF pulses
+        15.0: (90.0, 100.0),  # E.g., for 15s OFF pulses
         30.0: (140.0, 150.0),  # E.g., for 30s OFF pulses
         60.0: (190.0, 200.0),  # E.g., for 60s OFF pulses
     }

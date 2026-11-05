@@ -5,7 +5,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.358
         },
@@ -483,7 +483,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.649545454545454,
             "max_current_a": 0.358
         },
@@ -1144,7 +1144,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.462
         },
@@ -1481,7 +1481,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
@@ -1959,7 +1959,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.65381818181818,
             "max_current_a": 0.462
         },
@@ -2614,7 +2614,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
@@ -2951,7 +2951,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
@@ -3429,7 +3429,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.673333333333336,
             "max_current_a": 0.654
         },
@@ -4081,7 +4081,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
@@ -4415,7 +4415,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
@@ -4896,7 +4896,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.718999999999998,
             "max_current_a": 0.925
         },
@@ -5548,7 +5548,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.358
         },
@@ -5888,7 +5888,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.358
         },
@@ -6363,7 +6363,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.65090909090909,
             "max_current_a": 0.358
         },
@@ -7012,7 +7012,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.462
         },
@@ -7349,7 +7349,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
@@ -7830,7 +7830,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.64818181818182,
             "max_current_a": 0.462
         },
@@ -8491,7 +8491,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
@@ -8831,7 +8831,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
@@ -9306,7 +9306,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.667636363636362,
             "max_current_a": 0.654
         },
@@ -9961,7 +9961,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.695,
             "max_current_a": 0.925
         },
@@ -10298,7 +10298,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.695,
             "max_current_a": 0.925
         },
@@ -10773,7 +10773,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.838181818181816,
             "max_current_a": 0.925
         },
@@ -11431,7 +11431,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.086000000000006,
             "max_current_a": 0.462
         },
@@ -12095,7 +12095,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.227,
             "max_current_a": 0.654
         },
@@ -12438,7 +12438,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.313,
             "max_current_a": 0.654
         },
@@ -12913,7 +12913,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.38891666666667,
             "max_current_a": 0.654
         },
@@ -13571,7 +13571,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.445,
             "max_current_a": 0.925
         },
@@ -13914,7 +13914,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.925
         },
@@ -14392,7 +14392,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.49709090909091,
             "max_current_a": 0.925
         },
@@ -15050,7 +15050,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.358
         },
@@ -15393,7 +15393,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.358
         },
@@ -15874,7 +15874,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.457363636363645,
             "max_current_a": 0.358
         },
@@ -16532,7 +16532,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.461,
             "max_current_a": 0.462
         },
@@ -16866,7 +16866,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.453,
             "max_current_a": 0.462
         },
@@ -17341,7 +17341,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.46366666666667,
             "max_current_a": 0.462
         },
@@ -18008,7 +18008,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.477,
             "max_current_a": 0.654
         },
@@ -18351,7 +18351,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.469,
             "max_current_a": 0.654
         },
@@ -18826,7 +18826,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.49127272727273,
             "max_current_a": 0.654
         },
@@ -19481,7 +19481,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.523,
             "max_current_a": 0.925
         },
@@ -19815,7 +19815,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.523,
             "max_current_a": 0.925
         },
@@ -20290,7 +20290,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 25.4618,
             "max_current_a": 0.654
         },
@@ -20939,7 +20939,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 25.211,
             "max_current_a": 0.925
         },
@@ -21276,7 +21276,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.992,
             "max_current_a": 0.925
         },
@@ -21751,7 +21751,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.873666666666665,
             "max_current_a": 0.925
         },
@@ -22412,7 +22412,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.789,
             "max_current_a": 0.358
         },
@@ -22749,7 +22749,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.734,
             "max_current_a": 0.358
         },
@@ -23221,7 +23221,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.69427272727273,
             "max_current_a": 0.358
         },
@@ -23873,7 +23873,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.462
         },
@@ -24210,7 +24210,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.672,
             "max_current_a": 0.462
         },
@@ -24691,7 +24691,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.66690909090909,
             "max_current_a": 0.462
         },
@@ -25340,7 +25340,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.68,
             "max_current_a": 0.654
         },
@@ -25677,7 +25677,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.672,
             "max_current_a": 0.654
         },
@@ -26158,7 +26158,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.679800000000004,
             "max_current_a": 0.654
         },
@@ -26810,7 +26810,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.925
         },
@@ -27150,7 +27150,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 15.672,
             "max_current_a": 0.925
         },
@@ -27484,7 +27484,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 15.359,
             "max_current_a": 0.925
         },
@@ -27953,7 +27953,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 15.112000000000002,
             "max_current_a": 0.925
         },
@@ -28608,7 +28608,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.992,
             "max_current_a": 0.358
         },
@@ -28948,7 +28948,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.914,
             "max_current_a": 0.358
         },
@@ -29423,7 +29423,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.866272727272728,
             "max_current_a": 0.358
         },
@@ -30075,7 +30075,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.852,
             "max_current_a": 0.462
         },
@@ -30412,7 +30412,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.836,
             "max_current_a": 0.462
         },
@@ -30893,7 +30893,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.825818181818182,
             "max_current_a": 0.462
         },
@@ -31548,7 +31548,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.836,
             "max_current_a": 0.654
         },
@@ -31891,7 +31891,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.828,
             "max_current_a": 0.654
         },
@@ -32372,7 +32372,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 14.830666666666668,
             "max_current_a": 0.654
         },
@@ -33027,7 +33027,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.118454545454544,
             "max_current_a": 0.358
         },
@@ -33691,7 +33691,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.305,
             "max_current_a": 0.462
         },
@@ -34028,7 +34028,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.414,
             "max_current_a": 0.462
         },
@@ -34497,7 +34497,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.51381818181818,
             "max_current_a": 0.462
         },
@@ -35161,7 +35161,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.562,
             "max_current_a": 0.654
         },
@@ -35489,7 +35489,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.586,
             "max_current_a": 0.654
         },
@@ -35970,7 +35970,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.613363636363637,
             "max_current_a": 0.654
         },
@@ -36628,7 +36628,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.925
         },
@@ -36965,7 +36965,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.925
         },
@@ -37437,7 +37437,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.68041666666667,
             "max_current_a": 0.925
         },
@@ -38101,7 +38101,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.648,
             "max_current_a": 0.358
         },
@@ -38438,7 +38438,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.625,
             "max_current_a": 0.358
         },
@@ -38913,7 +38913,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.6266,
             "max_current_a": 0.358
         },
@@ -39568,7 +39568,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.633,
             "max_current_a": 0.462
         },
@@ -39902,7 +39902,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.641,
             "max_current_a": 0.462
         },
@@ -40377,7 +40377,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.637363636363634,
             "max_current_a": 0.462
         },
@@ -41029,7 +41029,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
@@ -41366,7 +41366,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.654
         },
@@ -41841,7 +41841,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 25.086583333333337,
             "max_current_a": 0.654
         },
@@ -42502,7 +42502,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.13863636363637,
             "max_current_a": 0.358
         },
@@ -43166,7 +43166,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.234,
             "max_current_a": 0.462
         },
@@ -43506,7 +43506,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.374272727272725,
             "max_current_a": 0.462
         },
@@ -44173,7 +44173,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.414,
             "max_current_a": 0.654
         },
@@ -44516,7 +44516,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.43,
             "max_current_a": 0.654
         },
@@ -44988,7 +44988,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.925
         },
@@ -45328,7 +45328,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.492,
             "max_current_a": 0.925
         },
@@ -45794,7 +45794,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.51950000000001,
             "max_current_a": 0.925
         },
@@ -46449,7 +46449,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.358
         },
@@ -46783,7 +46783,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.477,
             "max_current_a": 0.358
         },
@@ -47252,7 +47252,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.469,
             "max_current_a": 0.462
         },
@@ -47592,7 +47592,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.469,
             "max_current_a": 0.462
         },
@@ -48070,7 +48070,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.492,
             "max_current_a": 0.654
         },
@@ -48413,7 +48413,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "35",
+            "ambient_temp_setpoint_c": 35.0,
             "calculated_ambient_temp_c": 34.484,
             "max_current_a": 0.654
         },
@@ -48885,7 +48885,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 25.3464,
             "max_current_a": 0.462
         },
@@ -49537,7 +49537,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 25.094,
             "max_current_a": 0.654
         },
@@ -49868,7 +49868,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.805,
             "max_current_a": 0.925
         },
@@ -50199,7 +50199,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.758,
             "max_current_a": 0.925
         },
@@ -50671,7 +50671,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.7644,
             "max_current_a": 0.925
         },
@@ -51320,7 +51320,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.703,
             "max_current_a": 0.358
         },
@@ -51657,7 +51657,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.687,
             "max_current_a": 0.358
         },
@@ -52135,7 +52135,7 @@
         "metadata": {
             "time_on_s": 60.0,
             "time_off_s": 150.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.67266666666667,
             "max_current_a": 0.358
         },
@@ -52778,7 +52778,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.462
         },
@@ -53106,7 +53106,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.656,
             "max_current_a": 0.462
         },
@@ -53587,7 +53587,7 @@
         "metadata": {
             "time_on_s": 15.0,
             "time_off_s": 90.0,
-            "ambient_temp_setpoint_c": "25",
+            "ambient_temp_setpoint_c": 25.0,
             "calculated_ambient_temp_c": 24.664,
             "max_current_a": 0.654
         },
@@ -53924,7 +53924,7 @@
         "metadata": {
             "time_on_s": 30.0,
             "time_off_s": 120.0,
-            "ambient_temp_setpoint_c": "15",
+            "ambient_temp_setpoint_c": 15.0,
             "calculated_ambient_temp_c": 15.266,
             "max_current_a": 0.654
         },
