@@ -268,9 +268,9 @@ ax2.annotate(
 )
 
 ax1.set_ylabel('Temperature (°C)')
-ax2.set_ylabel(r'$\Delta$Cell Potential Ag/AgCl (mV)')
+ax2.set_ylabel('Cell Potential Ag/AgCl|Ag/AgCl (mV)')
 ax2.set_xlabel('Relative Time (s)')
-ax1.set_title('Closed-Loop Thermal & Potential Response Overlay')
+ax1.set_title('30 Consequtive Closed-Loop Thermal Pulses')
 
 plt.xlim(0, 240)
 plt.tight_layout()
