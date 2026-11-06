@@ -402,7 +402,7 @@ if __name__ == "__main__":
 
     closed_loop_window_s = (220.0, 240.0)
 
-    ambient_delta_threshold_c = 1.0
+    ambient_delta_threshold_c = 0.25
     min_duration_ratio = 0.90
 
     # Step 1: Parse Files
