@@ -128,7 +128,7 @@ cp_off_mean, cp_off_std = np.mean(
 # ==========================================
 # 3. MANUAL TIME WINDOW DEFINITIONS & STATS
 # ==========================================
-win_max_bounds = (110.0, 115.0)  # Max Window Bounds (s)
+win_max_bounds = (80, 115.0)  # Max Window Bounds (s)
 win_min_bounds = (235.0, 240.0)  # Min Window Bounds (s)
 
 

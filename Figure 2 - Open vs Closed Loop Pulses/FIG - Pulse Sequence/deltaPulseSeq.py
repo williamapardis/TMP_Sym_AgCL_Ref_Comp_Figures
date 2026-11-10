@@ -143,7 +143,13 @@ delta_cp_std = np.std(delta_cp_list)
 # 3. Plot Generation
 # ==========================================
 plt.rcdefaults()
-fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10, 8))
+
+fig, (ax1, ax2) = plt.subplots(
+    2, 1, 
+    sharex=True, 
+    figsize=(10, 10),
+    gridspec_kw={'hspace': 0.55}  # Creates whitespace between ax1 and ax2
+)
 
 pcb_orange = '#f99e1a'
 
@@ -241,9 +247,9 @@ ax2.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f'))
 # Phase Labels directly above ax1
 trans_inter = mtransforms.blended_transform_factory(ax1.transData, ax1.transAxes)
 phase_labels = [
-    (-30.0, "1. zero equilibration", "#3890fc"),
-    (60.0, "2. Heating - PID Enabled", "#fc5050"),
-    (150.0, "3. flushing cell", '#3890fc'),
+    (-30.0, "1. Baseline", "#3890fc"),
+    (60.0, "2. Heating", "#fc5050"),
+    (150.0, "3. Flushing", '#3890fc'),
 ]
 
 y_position = 1.03  # Positions labels just above the top edge of ax1 frame
@@ -262,6 +268,8 @@ for x_time, label_text, textColor in phase_labels:
         clip_on=False,
     )
 
-plt.subplots_adjust(top=0.88, hspace=0.3)
+# Adjust top margin so the top phase labels fit, leaving bottom space open
+plt.subplots_adjust(top=0.90, bottom=0.08)
+
 plt.savefig('closed_loop_pulses_merged.png', dpi=300)
 plt.show()
