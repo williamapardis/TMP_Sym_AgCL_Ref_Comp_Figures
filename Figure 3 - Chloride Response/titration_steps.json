@@ -1,0 +1,640 @@
+[
+    {
+        "step": 0,
+        "concentration_g_per_kg": 0.58,
+        "concentration_M": 0.01,
+        "activity": 0.00902,
+        "log_M": -2.0,
+        "log_activity": -2.045,
+        "net_volume_L": 0.25,
+        "dilutions_L": 0.0,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                2.8,
+                3.6
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1126.9081515151515,
+                    "w1_agcl_cp_std_mV": 0.9669355657429151,
+                    "w2_agcl_cp_mean_mV": 1133.9844104803494,
+                    "w2_agcl_cp_std_mV": 1.1645535520579002,
+                    "delta_T_mean_C": 0.9714878284773192,
+                    "delta_T_std_C": 0.013139200958278079,
+                    "delta_CP_mean_mV": 7.09783953144156,
+                    "delta_CP_std_mV": 0.43057499861663245
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1126.5504206008584,
+                    "w1_agcl_cp_std_mV": 1.1552451587187014,
+                    "w2_agcl_cp_mean_mV": 1159.3094177777778,
+                    "w2_agcl_cp_std_mV": 0.9745942807796453,
+                    "delta_T_mean_C": 5.172670706707802,
+                    "delta_T_std_C": 0.005442888693662609,
+                    "delta_CP_mean_mV": 32.771559157842056,
+                    "delta_CP_std_mV": 0.8354947932348815
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1126.6787264957263,
+                    "w1_agcl_cp_std_mV": 1.2048973579289435,
+                    "w2_agcl_cp_mean_mV": 1183.0135176991148,
+                    "w2_agcl_cp_std_mV": 1.0322438923173927,
+                    "delta_T_mean_C": 10.197096975607142,
+                    "delta_T_std_C": 0.0015652489729415736,
+                    "delta_CP_mean_mV": 56.31481694187487,
+                    "delta_CP_std_mV": 0.41128817668275996
+                }
+            }
+        },
+        "lj_cp_mean_mV": -77.72697245668591,
+        "lj_cp_std_mV": 0.4844527002676156
+    },
+    {
+        "step": 1,
+        "concentration_g_per_kg": 0.98,
+        "concentration_M": 0.0168,
+        "activity": 0.01478,
+        "log_M": -1.776,
+        "log_activity": -1.83,
+        "net_volume_L": 0.251,
+        "dilutions_L": 0.001,
+        "pulse_analysis": {
+            "eval_window_min": 30.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                2.8,
+                3.6
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 3,
+                    "w1_agcl_cp_mean_mV": 1132.6481942446042,
+                    "w1_agcl_cp_std_mV": 0.3669550553252273,
+                    "w2_agcl_cp_mean_mV": 1139.1616642335766,
+                    "w2_agcl_cp_std_mV": 0.4534298371169564,
+                    "delta_T_mean_C": 0.9652929009490485,
+                    "delta_T_std_C": 0.0045631429030126534,
+                    "delta_CP_mean_mV": 6.513007397128907,
+                    "delta_CP_std_mV": 0.1908402203338296
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 2,
+                    "w1_agcl_cp_mean_mV": 1132.5837311827956,
+                    "w1_agcl_cp_std_mV": 0.3146624796895931,
+                    "w2_agcl_cp_mean_mV": 1163.6484942528734,
+                    "w2_agcl_cp_std_mV": 0.8756358986350932,
+                    "delta_T_mean_C": 5.171164225239728,
+                    "delta_T_std_C": 0.0020970315638386694,
+                    "delta_CP_mean_mV": 31.062312745324448,
+                    "delta_CP_std_mV": 0.003981721078957889
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 2,
+                    "w1_agcl_cp_mean_mV": 1132.8924130434782,
+                    "w1_agcl_cp_std_mV": 0.20429125373251866,
+                    "w2_agcl_cp_mean_mV": 1185.045840425532,
+                    "w2_agcl_cp_std_mV": 1.2282590802241156,
+                    "delta_T_mean_C": 10.201331385548361,
+                    "delta_T_std_C": 0.0028758299928064446,
+                    "delta_CP_mean_mV": 52.15498364297446,
+                    "delta_CP_std_mV": 0.1148475318632336
+                }
+            }
+        },
+        "lj_cp_mean_mV": -91.28507484499556,
+        "lj_cp_std_mV": 0.25413057876589396
+    },
+    {
+        "step": 2,
+        "concentration_g_per_kg": 1.76,
+        "concentration_M": 0.0301,
+        "activity": 0.02559,
+        "log_M": -1.521,
+        "log_activity": -1.592,
+        "net_volume_L": 0.253,
+        "dilutions_L": 0.002,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                2.8,
+                3.6
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1143.6044212765958,
+                    "w1_agcl_cp_std_mV": 0.39430714507055875,
+                    "w2_agcl_cp_mean_mV": 1149.912582278481,
+                    "w2_agcl_cp_std_mV": 0.15926852369359032,
+                    "delta_T_mean_C": 0.9720943455134105,
+                    "delta_T_std_C": 0.009252361986358476,
+                    "delta_CP_mean_mV": 6.309242036694468,
+                    "delta_CP_std_mV": 0.2469041477779867
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1143.3786212765958,
+                    "w1_agcl_cp_std_mV": 0.5166203894363397,
+                    "w2_agcl_cp_mean_mV": 1170.4753755274262,
+                    "w2_agcl_cp_std_mV": 0.6033085976864972,
+                    "delta_T_mean_C": 5.174192718933085,
+                    "delta_T_std_C": 0.006562284054311038,
+                    "delta_CP_mean_mV": 27.09518538775824,
+                    "delta_CP_std_mV": 0.34809892393627373
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1143.6464556962026,
+                    "w1_agcl_cp_std_mV": 0.46316000818815595,
+                    "w2_agcl_cp_mean_mV": 1189.5202375,
+                    "w2_agcl_cp_std_mV": 0.6800507256279352,
+                    "delta_T_mean_C": 10.201378546099289,
+                    "delta_T_std_C": 0.0028708262442450807,
+                    "delta_CP_mean_mV": 45.874709131205734,
+                    "delta_CP_std_mV": 0.27093268374522694
+                }
+            }
+        },
+        "lj_cp_mean_mV": -107.51237273511647,
+        "lj_cp_std_mV": 0.16976019283561047
+    },
+    {
+        "step": 3,
+        "concentration_g_per_kg": 2.91,
+        "concentration_M": 0.0498,
+        "activity": 0.04074,
+        "log_M": -1.303,
+        "log_activity": -1.39,
+        "net_volume_L": 0.256,
+        "dilutions_L": 0.003,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1148.5357457627117,
+                    "w1_agcl_cp_std_mV": 0.663842227611358,
+                    "w2_agcl_cp_mean_mV": 1154.2310599999998,
+                    "w2_agcl_cp_std_mV": 0.6086522732507662,
+                    "delta_T_mean_C": 0.9894624822695057,
+                    "delta_T_std_C": 0.007035566282671648,
+                    "delta_CP_mean_mV": 5.696690053191287,
+                    "delta_CP_std_mV": 0.10524186037179979
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 4,
+                    "w1_agcl_cp_mean_mV": 1148.8079319371727,
+                    "w1_agcl_cp_std_mV": 0.49577952853782914,
+                    "w2_agcl_cp_mean_mV": 1171.9887166666667,
+                    "w2_agcl_cp_std_mV": 0.6042824282200858,
+                    "delta_T_mean_C": 5.155497299476762,
+                    "delta_T_std_C": 0.006016837501433428,
+                    "delta_CP_mean_mV": 23.189934430543246,
+                    "delta_CP_std_mV": 0.09980687795193503
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1148.9019021276597,
+                    "w1_agcl_cp_std_mV": 0.6131418174397681,
+                    "w2_agcl_cp_mean_mV": 1189.810342105263,
+                    "w2_agcl_cp_std_mV": 0.6960276206828708,
+                    "delta_T_mean_C": 10.184703820636011,
+                    "delta_T_std_C": 0.0022490603059012876,
+                    "delta_CP_mean_mV": 40.90950238846945,
+                    "delta_CP_std_mV": 0.16357761303598428
+                }
+            }
+        },
+        "lj_cp_mean_mV": -120.257887166236,
+        "lj_cp_std_mV": 0.11225499998950057
+    },
+    {
+        "step": 4,
+        "concentration_g_per_kg": 5.84,
+        "concentration_M": 0.1,
+        "activity": 0.0778,
+        "log_M": -1.0,
+        "log_activity": -1.109,
+        "net_volume_L": 0.264,
+        "dilutions_L": 0.008,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1154.3746822033897,
+                    "w1_agcl_cp_std_mV": 0.5432552197182035,
+                    "w2_agcl_cp_mean_mV": 1159.2897466666666,
+                    "w2_agcl_cp_std_mV": 0.4889929268290964,
+                    "delta_T_mean_C": 0.9793651498075612,
+                    "delta_T_std_C": 0.010135061843738604,
+                    "delta_CP_mean_mV": 4.919315491019961,
+                    "delta_CP_std_mV": 0.08974166054503248
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1154.4189322033899,
+                    "w1_agcl_cp_std_mV": 0.5110839631973564,
+                    "w2_agcl_cp_mean_mV": 1174.9269,
+                    "w2_agcl_cp_std_mV": 0.37778990192962725,
+                    "delta_T_mean_C": 5.15382730496454,
+                    "delta_T_std_C": 0.003697106524036581,
+                    "delta_CP_mean_mV": 20.505801861702093,
+                    "delta_CP_std_mV": 0.08386305794186434
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1154.1972415254238,
+                    "w1_agcl_cp_std_mV": 0.4398785619834064,
+                    "w2_agcl_cp_mean_mV": 1190.6461399999998,
+                    "w2_agcl_cp_std_mV": 0.37916457341546783,
+                    "delta_T_mean_C": 10.185714782283702,
+                    "delta_T_std_C": 0.0031433824118475002,
+                    "delta_CP_mean_mV": 36.4511758992262,
+                    "delta_CP_std_mV": 0.07279326120309944
+                }
+            }
+        },
+        "lj_cp_mean_mV": -137.7479569151228,
+        "lj_cp_std_mV": 0.04033084989481383
+    },
+    {
+        "step": 5,
+        "concentration_g_per_kg": 11.84,
+        "concentration_M": 0.2025,
+        "activity": 0.14884,
+        "log_M": -0.694,
+        "log_activity": -0.827,
+        "net_volume_L": 0.282,
+        "dilutions_L": 0.018,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1158.734987288136,
+                    "w1_agcl_cp_std_mV": 0.4474190342523321,
+                    "w2_agcl_cp_mean_mV": 1163.1419533333333,
+                    "w2_agcl_cp_std_mV": 0.2503049429973055,
+                    "delta_T_mean_C": 0.9854778152456027,
+                    "delta_T_std_C": 0.009371085575939499,
+                    "delta_CP_mean_mV": 4.403857962702887,
+                    "delta_CP_std_mV": 0.12762855546420993
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 4,
+                    "w1_agcl_cp_mean_mV": 1158.7159736842107,
+                    "w1_agcl_cp_std_mV": 0.4017630282721713,
+                    "w2_agcl_cp_mean_mV": 1176.4673916666666,
+                    "w2_agcl_cp_std_mV": 0.2311606690822558,
+                    "delta_T_mean_C": 5.154725376773056,
+                    "delta_T_std_C": 0.004637914260972427,
+                    "delta_CP_mean_mV": 17.749144215425645,
+                    "delta_CP_std_mV": 0.06973163003169265
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1158.6468523206752,
+                    "w1_agcl_cp_std_mV": 0.4892819151949223,
+                    "w2_agcl_cp_mean_mV": 1190.2274370860928,
+                    "w2_agcl_cp_std_mV": 0.3642031049716411,
+                    "delta_T_mean_C": 10.18371422271791,
+                    "delta_T_std_C": 0.002660095438102562,
+                    "delta_CP_mean_mV": 31.576257153969344,
+                    "delta_CP_std_mV": 0.09642895053265214
+                }
+            }
+        },
+        "lj_cp_mean_mV": -155.05510732758623,
+        "lj_cp_std_mV": 0.07975610265089944
+    },
+    {
+        "step": 6,
+        "concentration_g_per_kg": 17.66,
+        "concentration_M": 0.3021,
+        "activity": 0.21449,
+        "log_M": -0.52,
+        "log_activity": -0.669,
+        "net_volume_L": 0.302,
+        "dilutions_L": 0.02,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.7,
+                1.9
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1161.1008593750003,
+                    "w1_agcl_cp_std_mV": 0.23387121637689476,
+                    "w2_agcl_cp_mean_mV": 1164.6318843537415,
+                    "w2_agcl_cp_std_mV": 0.29653427873127775,
+                    "delta_T_mean_C": 0.9584284201819656,
+                    "delta_T_std_C": 0.007454159549979994,
+                    "delta_CP_mean_mV": 3.5301905459057705,
+                    "delta_CP_std_mV": 0.06390726260445127
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1160.8579180327872,
+                    "w1_agcl_cp_std_mV": 0.21145532373791273,
+                    "w2_agcl_cp_mean_mV": 1176.6090328947366,
+                    "w2_agcl_cp_std_mV": 0.21594438909379893,
+                    "delta_T_mean_C": 5.131206145574858,
+                    "delta_T_std_C": 0.005774932228317762,
+                    "delta_CP_mean_mV": 15.75236004135645,
+                    "delta_CP_std_mV": 0.06258332418314579
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1160.6744444444441,
+                    "w1_agcl_cp_std_mV": 0.19952386003460015,
+                    "w2_agcl_cp_mean_mV": 1189.066870748299,
+                    "w2_agcl_cp_std_mV": 0.24445402923586146,
+                    "delta_T_mean_C": 10.16159321195305,
+                    "delta_T_std_C": 0.00382222913313487,
+                    "delta_CP_mean_mV": 28.38600233389152,
+                    "delta_CP_std_mV": 0.06646260145941321
+                }
+            }
+        },
+        "lj_cp_mean_mV": -164.48221136461473,
+        "lj_cp_std_mV": 0.02692850472851994
+    },
+    {
+        "step": 7,
+        "concentration_g_per_kg": 23.47,
+        "concentration_M": 0.4015,
+        "activity": 0.27824,
+        "log_M": -0.396,
+        "log_activity": -0.556,
+        "net_volume_L": 0.325,
+        "dilutions_L": 0.023,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1161.7449152542372,
+                    "w1_agcl_cp_std_mV": 0.5286585370069723,
+                    "w2_agcl_cp_mean_mV": 1165.55092,
+                    "w2_agcl_cp_std_mV": 0.24729613880258514,
+                    "delta_T_mean_C": 0.9823466136432444,
+                    "delta_T_std_C": 0.01238515125162376,
+                    "delta_CP_mean_mV": 3.8062831688137067,
+                    "delta_CP_std_mV": 0.15233202524995812
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 4,
+                    "w1_agcl_cp_mean_mV": 1161.806041884817,
+                    "w1_agcl_cp_std_mV": 0.540116342251491,
+                    "w2_agcl_cp_mean_mV": 1176.7148347107438,
+                    "w2_agcl_cp_std_mV": 0.35661207358496183,
+                    "delta_T_mean_C": 5.1489513962766,
+                    "delta_T_std_C": 0.0056390416031110325,
+                    "delta_CP_mean_mV": 14.907574394446215,
+                    "delta_CP_std_mV": 0.4295774221343011
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1161.532920168067,
+                    "w1_agcl_cp_std_mV": 0.5853849393692155,
+                    "w2_agcl_cp_mean_mV": 1188.6265753424657,
+                    "w2_agcl_cp_std_mV": 0.5844568704058666,
+                    "delta_T_mean_C": 10.18180576757425,
+                    "delta_T_std_C": 0.0021763402786865085,
+                    "delta_CP_mean_mV": 27.114380541221816,
+                    "delta_CP_std_mV": 0.23174909438023245
+                }
+            }
+        },
+        "lj_cp_mean_mV": -171.55556834842605,
+        "lj_cp_std_mV": 0.6753784025200232
+    },
+    {
+        "step": 8,
+        "concentration_g_per_kg": 29.12,
+        "concentration_M": 0.4982,
+        "activity": 0.33927,
+        "log_M": -0.303,
+        "log_activity": -0.47,
+        "net_volume_L": 0.351,
+        "dilutions_L": 0.026,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.0,
+                1.8
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1160.6371864406779,
+                    "w1_agcl_cp_std_mV": 0.4774058066497774,
+                    "w2_agcl_cp_mean_mV": 1164.327165562914,
+                    "w2_agcl_cp_std_mV": 0.12556011886681756,
+                    "delta_T_mean_C": 0.9812308353647474,
+                    "delta_T_std_C": 0.008853757036015639,
+                    "delta_CP_mean_mV": 3.689329115802457,
+                    "delta_CP_std_mV": 0.07480469283719575
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1160.4082288135592,
+                    "w1_agcl_cp_std_mV": 0.43362568625480125,
+                    "w2_agcl_cp_mean_mV": 1174.7244527027026,
+                    "w2_agcl_cp_std_mV": 0.11745041129904833,
+                    "delta_T_mean_C": 5.152023292369774,
+                    "delta_T_std_C": 0.005308703199363722,
+                    "delta_CP_mean_mV": 14.31689419723648,
+                    "delta_CP_std_mV": 0.0242563713510043
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1160.273572033898,
+                    "w1_agcl_cp_std_mV": 0.4638953334582474,
+                    "w2_agcl_cp_mean_mV": 1185.781793103448,
+                    "w2_agcl_cp_std_mV": 0.13011294279768826,
+                    "delta_T_mean_C": 10.184239784709565,
+                    "delta_T_std_C": 0.0034885859526514696,
+                    "delta_CP_mean_mV": 25.509377405884514,
+                    "delta_CP_std_mV": 0.021051893280840894
+                }
+            }
+        },
+        "lj_cp_mean_mV": -187.13754913793105,
+        "lj_cp_std_mV": 1.749591586716664
+    },
+    {
+        "step": 9,
+        "concentration_g_per_kg": 35.02,
+        "concentration_M": 0.5992,
+        "activity": 0.40266,
+        "log_M": -0.222,
+        "log_activity": -0.395,
+        "net_volume_L": 0.383,
+        "dilutions_L": 0.032,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.7,
+                1.9
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1161.8578032786884,
+                    "w1_agcl_cp_std_mV": 0.0686647401992269,
+                    "w2_agcl_cp_mean_mV": 1164.9213716216218,
+                    "w2_agcl_cp_std_mV": 0.08441502047120623,
+                    "delta_T_mean_C": 0.9629284526967282,
+                    "delta_T_std_C": 0.004816045821173886,
+                    "delta_CP_mean_mV": 3.0633055879752193,
+                    "delta_CP_std_mV": 0.04518282730904784
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 4,
+                    "w1_agcl_cp_mean_mV": 1161.6017692307692,
+                    "w1_agcl_cp_std_mV": 0.07477700576858945,
+                    "w2_agcl_cp_mean_mV": 1174.6577666666667,
+                    "w2_agcl_cp_std_mV": 0.09750100284384061,
+                    "delta_T_mean_C": 5.133599358974358,
+                    "delta_T_std_C": 0.0029892511661780896,
+                    "delta_CP_mean_mV": 13.055997435897496,
+                    "delta_CP_std_mV": 0.03072006584907146
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1161.5299516129032,
+                    "w1_agcl_cp_std_mV": 0.08864234541473126,
+                    "w2_agcl_cp_mean_mV": 1185.172843537415,
+                    "w2_agcl_cp_std_mV": 0.12051915480919907,
+                    "delta_T_mean_C": 10.16109142869366,
+                    "delta_T_std_C": 0.004368008567949709,
+                    "delta_CP_mean_mV": 23.64442439696736,
+                    "delta_CP_std_mV": 0.049655189734274637
+                }
+            }
+        },
+        "lj_cp_mean_mV": -199.5796147893379,
+        "lj_cp_std_mV": 0.22865886666080087
+    },
+    {
+        "step": 10,
+        "concentration_g_per_kg": 40.86,
+        "concentration_M": 0.6992,
+        "activity": 0.46497,
+        "log_M": -0.155,
+        "log_activity": -0.333,
+        "net_volume_L": 0.421,
+        "dilutions_L": 0.038,
+        "pulse_analysis": {
+            "eval_window_min": 60.0,
+            "window_1_min": [
+                1.7,
+                1.9
+            ],
+            "window_2_min": [
+                3.25,
+                3.75
+            ],
+            "categories": {
+                "Small (~1\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1163.7136612903225,
+                    "w1_agcl_cp_std_mV": 0.7494018032371725,
+                    "w2_agcl_cp_mean_mV": 1166.8621768707483,
+                    "w2_agcl_cp_std_mV": 0.6062483236605548,
+                    "delta_T_mean_C": 0.9553928291915732,
+                    "delta_T_std_C": 0.008937401105654132,
+                    "delta_CP_mean_mV": 3.130198616533653,
+                    "delta_CP_std_mV": 0.6372673195659511
+                },
+                "Medium (~5\u00b0C)": {
+                    "count": 4,
+                    "w1_agcl_cp_mean_mV": 1163.747625,
+                    "w1_agcl_cp_std_mV": 0.7002891553077546,
+                    "w2_agcl_cp_mean_mV": 1176.4312333333335,
+                    "w2_agcl_cp_std_mV": 0.55674679662802,
+                    "delta_T_mean_C": 5.13130688835173,
+                    "delta_T_std_C": 0.0022481310611585058,
+                    "delta_CP_mean_mV": 12.649528062876016,
+                    "delta_CP_std_mV": 0.13399232809493608
+                },
+                "Large (~10\u00b0C)": {
+                    "count": 5,
+                    "w1_agcl_cp_mean_mV": 1163.750234375,
+                    "w1_agcl_cp_std_mV": 0.7308852240217589,
+                    "w2_agcl_cp_mean_mV": 1186.4821006711409,
+                    "w2_agcl_cp_std_mV": 0.7408392460736999,
+                    "delta_T_mean_C": 10.160952590627762,
+                    "delta_T_std_C": 0.0024748013518811826,
+                    "delta_CP_mean_mV": 22.75713480990271,
+                    "delta_CP_std_mV": 0.07245995074284098
+                }
+            }
+        },
+        "lj_cp_mean_mV": -203.31695693367786,
+        "lj_cp_std_mV": 0.21674655039748658
+    }
+]
