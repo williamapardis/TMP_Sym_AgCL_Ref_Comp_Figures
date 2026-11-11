@@ -236,9 +236,6 @@ def filter_pulses_by_ambient_setpoint_delta(
     return retained, removed
 
 
-# ==========================================
-# 4. Duration Filter (< 90% of expected)
-# ==========================================
 def filter_pulses_by_duration(
     pulses: list[Pulse], min_duration_ratio: float = 0.90
 ) -> tuple[list[Pulse], list[Pulse]]:
@@ -275,7 +272,7 @@ def filter_pulses_by_duration(
 
 
 # ==========================================
-# 5. Visualization Functions
+# 4. Visualization Functions
 # ==========================================
 def plot_pulses_overlay(
     pulses: list[Pulse],
@@ -386,8 +383,111 @@ def plot_pulses_overlay(
     plt.show()
 
 
+def plot_closed_loop_timeseries(
+    retained_pulses: list[Pulse],
+    removed_pulses: list[Pulse],
+    save_path: str = None,
+):
+    """Plots a continuous time series of closed-loop pulses, highlighting retained vs. removed pulses."""
+    if not retained_pulses and not removed_pulses:
+        print("No closed-loop pulses available to plot.")
+        return
+
+    removed_indices = {p.pulse_index for p in removed_pulses}
+    all_pulses = sorted(
+        retained_pulses + removed_pulses, key=lambda p: p.pulse_index
+    )
+
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(14, 7), sharex=True, gridspec_kw={"height_ratios": [1, 1]}
+    )
+
+    legend_tracker = {"retained": False, "removed": False}
+
+    for p in all_pulses:
+        df = p.data.copy()
+        time_vals = pd.to_datetime(df["datetime"])
+        temp_vals = df["temperature"]
+        cp_vals = df["AgCl CP"]
+
+        is_removed = p.pulse_index in removed_indices
+        color = "crimson" if is_removed else "#1f77b4"
+        alpha = 0.85 if is_removed else 0.7
+        linewidth = 1.4 if is_removed else 1.0
+
+        # Temperature Subplot
+        ax1.plot(
+            time_vals,
+            temp_vals,
+            color=color,
+            alpha=alpha,
+            linewidth=linewidth,
+            label="Removed Pulse"
+            if is_removed and not legend_tracker["removed"]
+            else (
+                "Retained Pulse"
+                if not is_removed and not legend_tracker["retained"]
+                else ""
+            ),
+        )
+
+        # Highlight removed pulse regions with light crimson background shading
+        if is_removed:
+            ax1.axvspan(
+                time_vals.iloc[0],
+                time_vals.iloc[-1],
+                color="crimson",
+                alpha=0.15,
+                zorder=0,
+            )
+            ax2.axvspan(
+                time_vals.iloc[0],
+                time_vals.iloc[-1],
+                color="crimson",
+                alpha=0.15,
+                zorder=0,
+            )
+
+        # Potential (AgCl CP) Subplot
+        ax2.plot(
+            time_vals,
+            cp_vals,
+            color=color,
+            alpha=alpha,
+            linewidth=linewidth,
+        )
+
+        if is_removed:
+            legend_tracker["removed"] = True
+        else:
+            legend_tracker["retained"] = True
+
+    ax1.set_ylabel("Temperature (°C)", fontsize=11)
+    ax1.set_title(
+        f"Closed-Loop Time Series — Total Pulses: {len(all_pulses)} "
+        f"(Retained: {len(retained_pulses)}, Removed: {len(removed_pulses)})",
+        fontsize=12,
+        pad=10,
+    )
+    ax1.grid(True, linestyle="--", alpha=0.5)
+    ax1.legend(loc="upper right", frameon=True)
+
+    ax2.set_ylabel("AgCl Potential (mV)", fontsize=11)
+    ax2.set_xlabel("Datetime", fontsize=11)
+    ax2.grid(True, linestyle="--", alpha=0.5)
+
+    plt.xticks(rotation=25)
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Saved continuous time-series plot: {save_path}")
+
+    plt.show()
+
+
 # ==========================================
-# Main Execution
+# 5. Main Execution Block
 # ==========================================
 if __name__ == "__main__":
     open_loop_file = "open_loop_elec_35_25_15C.txt"
@@ -395,11 +495,10 @@ if __name__ == "__main__":
 
     # MANUAL WINDOW SELECTION
     open_loop_window_map = {
-        15.0: (90.0, 100.0),  # E.g., for 15s OFF pulses
-        30.0: (140.0, 150.0),  # E.g., for 30s OFF pulses
-        60.0: (190.0, 200.0),  # E.g., for 60s OFF pulses
+        15.0: (90.0, 100.0),
+        30.0: (140.0, 150.0),
+        60.0: (190.0, 200.0),
     }
-
     closed_loop_window_s = (220.0, 240.0)
 
     ambient_delta_threshold_c = 0.25
@@ -459,10 +558,10 @@ if __name__ == "__main__":
         )
     )
 
-    # Step 5: Plot & Save Overlays WITH Window Shading
     all_removed_open = open_loop_dur_removed + removed_open_ambient
     all_removed_closed = closed_loop_dur_removed + removed_closed_ambient
 
+    # Step 5: Plot & Save Relative Overlays
     plot_pulses_overlay(
         clean_open_pulses,
         removed_pulses=all_removed_open,
@@ -477,7 +576,14 @@ if __name__ == "__main__":
         save_path="closed_loop_overlay_removed.png",
     )
 
-    # Step 6: Save Filtered Pulses to JSON
+    # Step 6: Plot Continuous Closed-Loop Time Series
+    plot_closed_loop_timeseries(
+        retained_pulses=clean_closed_pulses,
+        removed_pulses=all_removed_closed,
+        save_path="closed_loop_timeseries_highlighted.png",
+    )
+
+    # Step 7: Save Filtered Pulses to JSON
     save_pulses_to_json(clean_open_pulses, "open_loop_pulses_filtered.json")
     save_pulses_to_json(
         clean_closed_pulses, "closed_loop_pulses_filtered.json"

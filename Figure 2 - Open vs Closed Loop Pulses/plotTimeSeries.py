@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # File paths
-closed_loop_file = "closed_loop_elec_35_25_15C.txt"
+closed_loop_file = "closed_loop_titration.txt"
 open_loop_file = "open_loop_elec_35_25_15C.txt"
 output_image_path = "temperature_time_series.png"
 

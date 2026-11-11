@@ -102,7 +102,7 @@ class Pulse:
 # ==========================================
 # 2. Data Processing & Baseline Correction
 # ==========================================
-with open('closed_loop_pulses_25C.json', 'r') as f:
+with open('closed_loop_pulses_retained.json', 'r') as f:
     pulses_json = json.load(f)
 
 pulse_objects = []
