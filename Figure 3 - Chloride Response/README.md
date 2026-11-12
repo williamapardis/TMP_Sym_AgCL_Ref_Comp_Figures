@@ -20,5 +20,5 @@ Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data str
 ![Alt Text](combined_filtered_pulses_timeseries.png)
 
 ### Filtered Pulses
-![Alt Text](filtered_combined_filtered_pulses_overlaypulses.png)
+![Alt Text](filtered_combined_filtered_pulses_overlay.png)
 
