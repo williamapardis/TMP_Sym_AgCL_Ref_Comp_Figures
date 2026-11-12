@@ -12,5 +12,10 @@ Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data str
   <img src="selected_pulses.png" width="49%" />
 </p>
 
+## Pulse Filtering (closedPulseSelect.py)
 
+### Time Series of Exp.
+![Alt Text](filtered_pulse_timeseries.png)
 
+### Filtered Pulses
+![Alt Text](filtered_pulses.png)

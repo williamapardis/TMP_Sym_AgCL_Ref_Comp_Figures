@@ -525,9 +525,10 @@ def plot_current_pulses_overlay(
 def plot_closed_loop_timeseries(
     retained_pulses: list[Pulse],
     removed_pulses: list[Pulse],
+    selection_params: dict = None,
     save_path: str = None,
 ):
-    """Plots a 3-panel continuous time series (Temperature, AgCl CP, Current) of closed-loop pulses."""
+    """Plots a 2-panel continuous time series (Temperature, AgCl CP) with selection parameters."""
     if not retained_pulses and not removed_pulses:
         print("No closed-loop pulses available to plot.")
         return
@@ -537,8 +538,8 @@ def plot_closed_loop_timeseries(
         retained_pulses + removed_pulses, key=lambda p: p.pulse_index
     )
 
-    fig, (ax1, ax2, ax3) = plt.subplots(
-        3, 1, figsize=(14, 9), sharex=True, gridspec_kw={"height_ratios": [1, 1, 1]}
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(14, 6.5), sharex=True, gridspec_kw={"height_ratios": [1, 1]}
     )
 
     legend_tracker = {"retained": False, "removed": False}
@@ -548,7 +549,6 @@ def plot_closed_loop_timeseries(
         time_vals = pd.to_datetime(df["datetime"])
         temp_vals = df["temperature"]
         cp_vals = df["AgCl CP"]
-        curr_vals = df["current"] if "current" in df.columns else None
 
         is_removed = p.pulse_index in removed_indices
         color = "crimson" if is_removed else "#1f77b4"
@@ -587,13 +587,6 @@ def plot_closed_loop_timeseries(
                 alpha=0.15,
                 zorder=0,
             )
-            ax3.axvspan(
-                time_vals.iloc[0],
-                time_vals.iloc[-1],
-                color="crimson",
-                alpha=0.15,
-                zorder=0,
-            )
 
         # Subplot 2: Potential (AgCl CP)
         ax2.plot(
@@ -604,40 +597,48 @@ def plot_closed_loop_timeseries(
             linewidth=linewidth,
         )
 
-        # Subplot 3: Current
-        if curr_vals is not None:
-            ax3.plot(
-                time_vals,
-                curr_vals,
-                color=color,
-                alpha=alpha,
-                linewidth=linewidth,
-            )
-
         if is_removed:
             legend_tracker["removed"] = True
         else:
             legend_tracker["retained"] = True
 
     ax1.set_ylabel("Temperature (°C)", fontsize=11)
-    ax1.set_title(
-        f"Closed-Loop Time Series — Total Pulses: {len(all_pulses)} "
-        f"(Retained: {len(retained_pulses)}, Removed: {len(removed_pulses)})",
-        fontsize=12,
-        pad=10,
-    )
     ax1.grid(True, linestyle="--", alpha=0.5)
     ax1.legend(loc="upper right", frameon=True)
 
     ax2.set_ylabel("AgCl Potential (mV)", fontsize=11)
+    ax2.set_xlabel("Datetime", fontsize=11)
     ax2.grid(True, linestyle="--", alpha=0.5)
 
-    ax3.set_ylabel("Current", fontsize=11)
-    ax3.set_xlabel("Datetime", fontsize=11)
-    ax3.grid(True, linestyle="--", alpha=0.5)
+    # Figure Title & Selection Parameters Annotation
+    fig.suptitle(
+        f"Closed-Loop Time Series — Total Pulses: {len(all_pulses)} "
+        f"(Retained: {len(retained_pulses)}, Removed: {len(removed_pulses)})",
+        fontsize=13,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    if selection_params:
+        param_str = "  |  ".join(f"{k}: {v}" for k, v in selection_params.items())
+        fig.text(
+            0.5,
+            0.935,
+            f"Selection Parameters — {param_str}",
+            ha="center",
+            va="top",
+            fontsize=9.5,
+            bbox=dict(
+                boxstyle="round,pad=0.35",
+                facecolor="#f4f6f8",
+                edgecolor="#cccccc",
+            ),
+        )
+        plt.tight_layout(rect=[0, 0, 1, 0.90])
+    else:
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
 
     plt.xticks(rotation=25)
-    plt.tight_layout()
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
@@ -655,7 +656,7 @@ if __name__ == "__main__":
     closed_loop_window_s = (220.0, 240.0)
     ambient_delta_threshold_c = 0.25
     min_duration_ratio = 0.90
-    step_start_window_s = 300.0  # Window at start of step (in seconds)
+    step_start_window_s = 600.0  # Window at start of step (in seconds)
 
     # Target steps to retain
     target_steps = [0, 4, 9]
@@ -667,9 +668,9 @@ if __name__ == "__main__":
     print("Parsing Closed-Loop Data...")
     closed_loop_pulses = parse_closed_loop_pulses(closed_loop_file)
 
-    plot_pulses_overlay(closed_loop_pulses,save_path="raw_pulses.png")
+    plot_pulses_overlay(closed_loop_pulses, save_path="raw_pulses.png")
 
-    # Step 2: Filter by Target Steps ([0, 4, 8])
+    # Step 2: Filter by Target Steps
     print(f"\n--- Filtering Closed-Loop (Target Steps Only: {target_steps}) ---")
     closed_loop_step_sel_clean, closed_loop_step_sel_removed = (
         filter_pulses_by_target_steps(
@@ -737,16 +738,26 @@ if __name__ == "__main__":
         time_window_s=closed_loop_window_s,
     )
 
-    # Step 9: Plot Continuous Closed-Loop Time Series (Temperature, AgCl CP, Current)
+    # Step 9: Plot Continuous Closed-Loop Time Series (Temperature, AgCl CP)
+    selection_summary = {
+        "Steps": target_steps,
+        "Last in Step": "Excluded",
+        "Ambient Window": f"{closed_loop_window_s[0]:.0f}–{closed_loop_window_s[1]:.0f}s",
+        "Max |ΔT_amb|": f"{ambient_delta_threshold_c}°C",
+        "Min Duration": f"{min_duration_ratio:.0%}",
+        "Step Start Offset": f"≥{step_start_window_s:.0f}s",
+    }
+
     plot_closed_loop_timeseries(
         retained_pulses=clean_closed_pulses,
         removed_pulses=all_removed_closed,
+        selection_params=selection_summary,
         save_path="parsed_pulse_timeseries.png",
     )
 
     # Step 10: Save Filtered Data (with assigned delta_temp_target_c metadata) to JSON
     save_pulses_to_json(
-        clean_closed_pulses, "closed_loop_pulses_filtered.json"
+        clean_closed_pulses, "pulses.json"
     )
 
     plot_pulses_overlay(clean_closed_pulses, save_path="selected_pulses.png")
