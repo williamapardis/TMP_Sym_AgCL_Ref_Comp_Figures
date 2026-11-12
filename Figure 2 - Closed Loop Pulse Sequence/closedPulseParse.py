@@ -667,8 +667,7 @@ if __name__ == "__main__":
     print("Parsing Closed-Loop Data...")
     closed_loop_pulses = parse_closed_loop_pulses(closed_loop_file)
 
-    plot_pulses_overlay(closed_loop_pulses)
-    plot_current_pulses_overlay(closed_loop_pulses)
+    plot_pulses_overlay(closed_loop_pulses,save_path="raw_pulses.png")
 
     # Step 2: Filter by Target Steps ([0, 4, 8])
     print(f"\n--- Filtering Closed-Loop (Target Steps Only: {target_steps}) ---")
@@ -742,7 +741,7 @@ if __name__ == "__main__":
     plot_closed_loop_timeseries(
         retained_pulses=clean_closed_pulses,
         removed_pulses=all_removed_closed,
-        save_path="closed_loop_timeseries_highlighted.png",
+        save_path="parsed_pulse_timeseries.png",
     )
 
     # Step 10: Save Filtered Data (with assigned delta_temp_target_c metadata) to JSON
@@ -750,5 +749,5 @@ if __name__ == "__main__":
         clean_closed_pulses, "closed_loop_pulses_filtered.json"
     )
 
-    plot_pulses_overlay(clean_closed_pulses)
+    plot_pulses_overlay(clean_closed_pulses, save_path="selected_pulses.png")
     plot_current_pulses_overlay(clean_closed_pulses)

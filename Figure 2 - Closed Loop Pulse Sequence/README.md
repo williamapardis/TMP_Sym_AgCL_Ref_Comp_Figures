@@ -10,27 +10,18 @@ Compare open vs closed loop pulses (CP and T pulses)
 - reproducibility
 - temperature repeatability
 
+# Macro Selection and Parsing of Pulses (closedPulseParse.py)
+Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data structure and saved ina JSON file format. Macro-selection allows for some high level selection of the dataset.
+
 ## Time Series of Exp.
-Open and closed loop pulses were evaluated in independent experiments. Closed loop exp. ran for a duration of ~48hrs and open loop ~17hrs. 
-![Alt Text](temperature_time_series.png)
+![Alt Text](parsed_pulse_timeseries.png)
 
 # Parsing and Filtering Pulses
 ## Parsed Pulses
 <p float="left">
-  <img src="closed_loop_overlay_raw.png" width="49%" />
-  <img src="open_loop_overlay_raw.png" width="49%" />
+  <img src="selected_pulses.png" width="49%" />
+  <img src="raw_pulses.png" width="49%" />
 </p>
 
 
-## Removed Pulses
-removed pulses that were shorter than defined on off duration and where the measured temperature deviated from the temperature setpoint.
-<p float="left">
-  <img src="closed_loop_overlay_removed.png" width="49%" />
-  <img src="open_loop_overlay_removed.png" width="49%" />
-</p>
 
-## Remaining Pulses
-<p float="left">
-  <img src="closed_loop_overlay_filtered.png" width="49%" />
-  <img src="open_loop_overlay_filtered.png" width="49%" />
-</p>
