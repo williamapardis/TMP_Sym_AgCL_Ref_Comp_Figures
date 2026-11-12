@@ -1,4 +1,8 @@
-# Figure 2. Open vs Closed Loop Pulses
+# Figure 2. Closed-Loop Pulse Sequence
+
+![Alt Text](pulse_sequence.png)
+
+# Data Processing Steps
 
 ## Macro Selection and Parsing of Pulses (closedPulseParse.py)
 Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data structure and saved ina JSON file format. Macro-selection allows for some high level selection of the dataset.
@@ -19,3 +23,4 @@ Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data str
 
 ### Filtered Pulses
 ![Alt Text](filtered_pulses.png)
+
