@@ -659,7 +659,7 @@ if __name__ == "__main__":
     step_start_window_s = 600.0  # Window at start of step (in seconds)
 
     # Target steps to retain
-    target_steps = [0, 4, 9]
+    target_steps = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     # Target pulse temperature step amplitudes (°C)
     target_amplitudes = [1.0, 5.0, 10.0]

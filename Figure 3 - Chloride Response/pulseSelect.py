@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import json
 import math
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
@@ -85,6 +85,13 @@ class Pulse:
 # ==========================================
 # 2. I/O Helpers & Filtering Engine
 # ==========================================
+def load_pulses_from_json(filepath: str) -> List[Pulse]:
+    """Loads all Pulse objects from a JSON file."""
+    with open(filepath, "r") as f:
+        raw_data = json.load(f)
+    return [Pulse.from_dict(p) for p in raw_data]
+
+
 def save_pulses_to_json(pulses: List[Pulse], filepath: str) -> None:
     """Saves a list of Pulse objects to a JSON file matching the exact schema."""
     json_data = [p.to_dict() for p in pulses]
@@ -107,10 +114,7 @@ def filter_pulses(
 
     Returns (retained_pulses, removed_pulses, active_filter_params).
     """
-    with open(json_filepath, "r") as f:
-        raw_data = json.load(f)
-
-    pulses = [Pulse.from_dict(p) for p in raw_data]
+    pulses = load_pulses_from_json(json_filepath)
     retained_pulses = []
     removed_pulses = []
 
@@ -188,7 +192,8 @@ def filter_pulses(
         active_params["End"] = end_time.strftime("%Y-%m-%d %H:%M")
 
     print(
-        f"Filtering '{json_filepath}': Retained={len(retained_pulses)}, Removed={len(removed_pulses)}"
+        f"Filtering '{json_filepath}' (ΔT={delta_temp_target_c}°C): "
+        f"Retained={len(retained_pulses)}, Removed={len(removed_pulses)}"
     )
     return retained_pulses, removed_pulses, active_params
 
@@ -196,52 +201,66 @@ def filter_pulses(
 # ==========================================
 # 3. Visualization Functions
 # ==========================================
+GROUP_COLORS = {
+    "1°C": "#1f77b4",   # Blue
+    "5°C": "#2ca02c",   # Green
+    "10°C": "#ff7f0e",  # Orange
+}
+
+
 def plot_pulses_overlay(
-    pulses: List[Pulse],
-    removed_pulses: List[Pulse] = None,
+    pulse_groups: Dict[str, List[Pulse]],
+    removed_pulses: Optional[List[Pulse]] = None,
     time_window_s: Optional[Tuple[float, float]] = None,
     smooth_window: Optional[int] = None,
-    save_path: str = None,
+    save_path: Optional[str] = None,
 ):
-    """Overlays Temperature, AgCl CP, and Current starting from relative time t = 0."""
-    if not pulses and not removed_pulses:
+    """Overlays Temperature, AgCl CP, and Current starting from relative time t = 0,
+    coloring each ΔT group distinctly and showing removed pulses in dashed crimson.
+    """
+    total_retained = sum(len(plist) for plist in pulse_groups.values())
+    if total_retained == 0 and not removed_pulses:
         return
 
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 8.5), sharex=True)
-    legend_tracker = {"retained": False, "removed": False}
+    fallback_colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
-    # Plot retained pulses
-    for p in pulses:
-        df = p.data.copy()
-        time_vals = df["datetime"]
-        rel_time = (
-            pd.to_datetime(time_vals) - pd.to_datetime(time_vals.iloc[0])
-        ).dt.total_seconds()
+    # Plot each retained group in its own color
+    for idx, (group_label, pulses) in enumerate(pulse_groups.items()):
+        color = GROUP_COLORS.get(group_label, fallback_colors[idx % len(fallback_colors)])
+        labeled = False
 
-        label = ""
-        if not legend_tracker["retained"]:
-            label = "Retained Pulse"
-            legend_tracker["retained"] = True
+        for p in pulses:
+            df = p.data.copy()
+            time_vals = df["datetime"]
+            rel_time = (
+                pd.to_datetime(time_vals) - pd.to_datetime(time_vals.iloc[0])
+            ).dt.total_seconds()
 
-        ax1.plot(
-            rel_time,
-            df["temperature"],
-            alpha=0.7,
-            linewidth=1.2,
-            label=label,
-        )
-        ax2.plot(rel_time, df["AgCl CP"], alpha=0.7, linewidth=1.2)
+            label = f"ΔT = {group_label} (n={len(pulses)})" if not labeled else ""
+            labeled = True
 
-        if "current" in df.columns:
-            current_vals = (
-                df["current"].rolling(window=smooth_window, center=True, min_periods=1).mean()
-                if smooth_window
-                else df["current"]
+            ax1.plot(
+                rel_time,
+                df["temperature"],
+                color=color,
+                alpha=0.75,
+                linewidth=1.2,
+                label=label,
             )
-            ax3.plot(rel_time, current_vals, alpha=0.7, linewidth=1.2)
+            ax2.plot(rel_time, df["AgCl CP"], color=color, alpha=0.75, linewidth=1.2)
 
-    # Plot removed pulses (if any)
+            if "current" in df.columns:
+                current_vals = (
+                    df["current"].rolling(window=smooth_window, center=True, min_periods=1).mean()
+                    if smooth_window
+                    else df["current"]
+                )
+                ax3.plot(rel_time, current_vals, color=color, alpha=0.75, linewidth=1.2)
+
+    # Plot entirely removed pulses in original dashed crimson style
     if removed_pulses:
+        removed_labeled = False
         for p in removed_pulses:
             df = p.data.copy()
             time_vals = df["datetime"]
@@ -249,10 +268,8 @@ def plot_pulses_overlay(
                 pd.to_datetime(time_vals) - pd.to_datetime(time_vals.iloc[0])
             ).dt.total_seconds()
 
-            label = ""
-            if not legend_tracker["removed"]:
-                label = "Removed Pulse"
-                legend_tracker["removed"] = True
+            label = f"Removed Pulse (n={len(removed_pulses)})" if not removed_labeled else ""
+            removed_labeled = True
 
             ax1.plot(
                 rel_time,
@@ -301,7 +318,7 @@ def plot_pulses_overlay(
 
     ax1.set_ylabel("Temperature (°C)")
     ax1.set_title(
-        f"Closed-Loop Pulse Overlay — Retained: {len(pulses or [])}, Removed: {len(removed_pulses or [])}"
+        f"Closed-Loop Pulse Overlay — Retained: {total_retained}, Removed: {len(removed_pulses or [])}"
     )
     ax1.grid(True, alpha=0.3)
     ax1.legend(loc="upper right", frameon=True)
@@ -321,94 +338,30 @@ def plot_pulses_overlay(
     plt.show(block=False)
 
 
-def plot_current_vs_cp_overlay(
-    pulses: List[Pulse],
-    smooth_window: Optional[int] = None,
-    save_path: str = None,
-):
-    """Overlays Current and Closed-Loop AgCl CP on dual twin y-axes against relative time."""
-    valid_pulses = [p for p in pulses if "current" in p.data.columns and "AgCl CP" in p.data.columns]
-    if not valid_pulses:
-        print("Warning: No pulses with both 'current' and 'AgCl CP' available to plot.")
-        return
-
-    fig, ax1 = plt.subplots(figsize=(10, 5))
-    ax2 = ax1.twinx()
-
-    current_color = "tab:red"
-    cp_color = "tab:orange"
-
-    curr_labeled = False
-    cp_labeled = False
-
-    for p in valid_pulses:
-        df = p.data.copy()
-        time_vals = df["datetime"]
-        rel_time = (
-            pd.to_datetime(time_vals) - pd.to_datetime(time_vals.iloc[0])
-        ).dt.total_seconds()
-
-        current_vals = (
-            df["current"].rolling(window=smooth_window, center=True, min_periods=1).mean()
-            if smooth_window
-            else df["current"]
-        )
-
-        ax1.plot(
-            rel_time,
-            current_vals,
-            color=current_color,
-            alpha=0.6,
-            linewidth=1.2,
-            label="Current" if not curr_labeled else "",
-        )
-        curr_labeled = True
-
-        ax2.plot(
-            rel_time,
-            df["AgCl CP"],
-            color=cp_color,
-            alpha=0.6,
-            linewidth=1.2,
-            label="AgCl CP" if not cp_labeled else "",
-        )
-        cp_labeled = True
-
-    ax1.set_xlabel("Relative Time from Pulse Start (s)")
-    ax1.set_ylabel("Current", color=current_color)
-    ax1.tick_params(axis="y", labelcolor=current_color)
-    ax1.grid(True, alpha=0.3)
-
-    ax2.set_ylabel("Closed Loop AgCl CP", color=cp_color)
-    ax2.tick_params(axis="y", labelcolor=cp_color)
-
-    title_smooth = f" (Smoothed window={smooth_window})" if smooth_window else ""
-    plt.title(f"Closed-Loop Overlay: Current vs. AgCl CP{title_smooth} (Pulses: {len(valid_pulses)})")
-
-    lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper right")
-
-    plt.tight_layout()
-    if save_path:
-        plt.savefig(save_path, dpi=300)
-        print(f"Saved Current vs. CP overlay plot: {save_path}")
-    plt.show(block=False)
-
-
 def plot_closed_loop_timeseries(
-    retained_pulses: List[Pulse],
-    removed_pulses: List[Pulse] = None,
+    pulse_groups: Dict[str, List[Pulse]],
+    removed_pulses: Optional[List[Pulse]] = None,
     filter_params: Optional[dict] = None,
-    save_path: str = None,
+    save_path: Optional[str] = None,
 ):
-    """Plots a 2-panel time series (Temperature, AgCl CP) with broken x-axes between steps."""
+    """Plots a 2-panel time series (Temperature, AgCl CP) with broken x-axes between steps,
+    coloring each ΔT group distinctly and highlighting removed pulses in crimson.
+    """
+    removed_pulses = removed_pulses or []
+    retained_pulses = [p for plist in pulse_groups.values() for p in plist]
+
     if not retained_pulses and not removed_pulses:
         print("No closed-loop pulses available to plot.")
         return
 
-    removed_pulses = removed_pulses or []
+    # Map pulse_index -> group label ("1°C", "5°C", "10°C")
+    pulse_group_map = {
+        p.pulse_index: group_label
+        for group_label, plist in pulse_groups.items()
+        for p in plist
+    }
     removed_indices = {p.pulse_index for p in removed_pulses}
+
     all_pulses = sorted(
         retained_pulses + removed_pulses, key=lambda p: p.pulse_index
     )
@@ -441,11 +394,11 @@ def plot_closed_loop_timeseries(
         gridspec_kw={"width_ratios": width_ratios, "wspace": 0.05, "hspace": 0.08},
     )
 
-    # Normalize axes shape to 2D array (2, n_steps) even if n_steps == 1
     if n_steps == 1:
         axes = axes.reshape(2, 1)
 
-    legend_tracker = {"retained": False, "removed": False}
+    legend_tracker = {g: False for g in pulse_groups}
+    legend_tracker["removed"] = False
 
     for col_idx, step_val in enumerate(ordered_steps):
         ax1 = axes[0, col_idx]
@@ -459,23 +412,28 @@ def plot_closed_loop_timeseries(
             cp_vals = df["AgCl CP"]
 
             is_removed = p.pulse_index in removed_indices
-            color = "crimson" if is_removed else "#1f77b4"
-            alpha = 0.85 if is_removed else 0.7
-            linewidth = 1.4 if is_removed else 1.0
-
-            label = ""
-            if is_removed and not legend_tracker["removed"]:
-                label = "Removed Pulse"
+            if is_removed:
+                color = "crimson"
+                linestyle = "--"
+                alpha = 0.85
+                linewidth = 1.4
+                label = "Removed Pulse" if not legend_tracker["removed"] else ""
                 legend_tracker["removed"] = True
-            elif not is_removed and not legend_tracker["retained"]:
-                label = "Retained Pulse"
-                legend_tracker["retained"] = True
+            else:
+                g_label = pulse_group_map[p.pulse_index]
+                color = GROUP_COLORS.get(g_label, "#1f77b4")
+                linestyle = "-"
+                alpha = 0.75
+                linewidth = 1.1
+                label = f"ΔT = {g_label}" if not legend_tracker[g_label] else ""
+                legend_tracker[g_label] = True
 
             # Row 0: Temperature
             ax1.plot(
                 time_vals,
                 temp_vals,
                 color=color,
+                linestyle=linestyle,
                 alpha=alpha,
                 linewidth=linewidth,
                 label=label,
@@ -486,6 +444,7 @@ def plot_closed_loop_timeseries(
                 time_vals,
                 cp_vals,
                 color=color,
+                linestyle=linestyle,
                 alpha=alpha,
                 linewidth=linewidth,
             )
@@ -579,35 +538,58 @@ def plot_closed_loop_timeseries(
 # 4. Execution Pipeline
 # ==========================================
 if __name__ == "__main__":
+    JSON_FILE = "pulses.json"
+    DELTA_TEMPS = [1.0, 5.0, 10.0]
 
-    print("--- Processing Closed-Loop Data ---")
-    closed_retained, closed_removed, active_filters = filter_pulses(
-        json_filepath="pulses.json",
-        target_steps=[0, 4, 9],
-        delta_temp_target_c=5.0,
+    common_filter_kwargs = dict(
+        json_filepath=JSON_FILE,
+        target_steps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         ambient_temp_setpoint_c=25.0,
         start_time=pd.to_datetime("2026-09-12 19:00:00"),
         end_time=pd.to_datetime("2026-09-14 03:30:00"),
     )
 
-    # Save filtered subset to JSON
-    save_pulses_to_json(closed_retained, "filtered_pulses.json")
+    retained_groups: Dict[str, List[Pulse]] = {}
+    retained_indices = set()
+    shared_filter_params = {}
 
-    # Combined 3-Panel Relative Overlay (Temperature, AgCl CP, Current)
+    print("--- Processing Closed-Loop Data ---")
+    for dt_target in DELTA_TEMPS:
+        label = f"{int(dt_target)}°C" if dt_target.is_integer() else f"{dt_target}°C"
+        file_prefix = f"{int(dt_target)}C" if dt_target.is_integer() else f"{dt_target}C"
+
+        retained, _, active_filters = filter_pulses(
+            delta_temp_target_c=dt_target,
+            **common_filter_kwargs,
+        )
+
+        # Save each ΔT subset to its own JSON file
+        save_pulses_to_json(retained, f"{file_prefix}_filtered_pulses.json")
+
+        retained_groups[label] = retained
+        retained_indices.update(p.pulse_index for p in retained)
+        shared_filter_params = active_filters
+
+    # Determine pulses entirely removed across ALL target ΔTs
+    all_pulses = load_pulses_from_json(JSON_FILE)
+    entirely_removed = [p for p in all_pulses if p.pulse_index not in retained_indices]
+    shared_filter_params["ΔT Target"] = ", ".join(retained_groups.keys())
+
+    # 1. Combined 3-Panel Relative Overlay (Temperature, AgCl CP, Current)
     plot_pulses_overlay(
-        pulses=closed_retained,
-        removed_pulses=closed_removed,
+        pulse_groups=retained_groups,
+        removed_pulses=entirely_removed,
         time_window_s=(220.0, 240.0),
         smooth_window=3,
-        save_path="filtered_pulses.png",
+        save_path="combined_filtered_pulses_overlay.png",
     )
 
-    # 2-Panel Broken-Axis Time Series Plot with Filter Parameters
+    # 2. Combined 2-Panel Broken-Axis Time Series Plot
     plot_closed_loop_timeseries(
-        retained_pulses=closed_retained,
-        removed_pulses=closed_removed,
-        filter_params=active_filters,
-        save_path="filtered_pulse_timeseries.png",
+        pulse_groups=retained_groups,
+        removed_pulses=entirely_removed,
+        filter_params=shared_filter_params,
+        save_path="combined_filtered_pulses_timeseries.png",
     )
 
     input("Press Enter to close all plots...")
