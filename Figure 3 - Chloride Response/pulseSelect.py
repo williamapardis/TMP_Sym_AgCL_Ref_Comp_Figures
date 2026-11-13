@@ -546,7 +546,7 @@ if __name__ == "__main__":
         target_steps=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         ambient_temp_setpoint_c=25.0,
         start_time=pd.to_datetime("2026-09-12 19:00:00"),
-        end_time=pd.to_datetime("2026-09-14 03:30:00"),
+        end_time=pd.to_datetime("2026-09-13 12:00:00"),
     )
 
     retained_groups: Dict[str, List[Pulse]] = {}
