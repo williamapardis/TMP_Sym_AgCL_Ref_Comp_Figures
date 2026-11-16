@@ -39,7 +39,10 @@ Because experimental chloride concentrations span $0.01\text{ M}$ to $0.70\text{
    $$I = c_{\text{Cl}^-}$$
 
 2. **Davies Equation for Single-Ion Activity Coefficient ($\gamma_{\text{Cl}^-}$):**
-   $$\log_{10}(\gamma_{\text{Cl}^-}) = -A(T)\, z_{\text{Cl}^-}^2 \left( \frac{\sqrt{I}}{1 + \sqrt{I}} - b\, I \right)$$
+
+$$
+\LARGE \log_{10}(\gamma_{\text{Cl}^-}) = -A(T)\, z_{\text{Cl}^-}^2 \left( \frac{\sqrt{I}}{1 + \sqrt{I}} - b\, I \right)
+$$
 
 3. **Temperature-Dependent Debye–Hückel Parameter ($A(T)$):**
    $$A(T) = 1.824829 \times 10^6 \, \left(\varepsilon_r(T) \cdot T\right)^{-3/2}$$
