@@ -116,7 +116,63 @@ class Pulse:
 
 
 # ==========================================
-# Manual Plot Configurations
+# Thermodynamic Activity Calculation (Davies Equation)
+# ==========================================
+def calculate_chloride_activity(
+    concentration_m: float,
+    temp_c: float = 25.0,
+    z: int = -1,
+    davies_b: float = 0.30,
+) -> dict:
+    """
+    Calculates single-ion chloride activity and log10(activity) in an aqueous
+    1:1 electrolyte (e.g., NaCl / KCl) using the Davies equation.
+
+    References:
+    1. Davies, C. W. (1962). Ion Association. London: Butterworths, pp. 39-41.
+       (Empirical linear parameter b = 0.30 at 25 C).
+    2. Malmberg, C. G., & Maryott, A. A. (1956). Dielectric constant of water from 0 to 100 C.
+       Journal of Research of the National Bureau of Standards, 56(1), 1-8.
+    3. Robinson, R. A., & Stokes, R. H. (2002). Electrolyte Solutions (2nd rev. ed.).
+       Dover Publications (Debye-Huckel A parameter = 1.8248e6 * (eps_r * T)^(-3/2)).
+    """
+    t_k = temp_c + 273.15
+
+    # Static relative permittivity (dielectric constant) of pure water (Malmberg & Maryott, 1956)
+    eps_r = (
+        87.740
+        - 0.40008 * temp_c
+        + 9.398e-4 * (temp_c ** 2)
+        - 1.410e-6 * (temp_c ** 3)
+    )
+
+    # Temperature-dependent Debye-Huckel limiting slope A [(kg/mol)^(1/2) ~ (L/mol)^(1/2) in dilute water]
+    # Standard value at 25.0 C (298.15 K, eps_r = 78.30): A = 0.5092
+    dh_a = 1.824829e6 * ((eps_r * t_k) ** -1.5)
+
+    # For a completely dissociated 1:1 strong electrolyte (|z+| = |z-| = 1),
+    # ionic strength I = 0.5 * (c * 1^2 + c * (-1)^2) = c
+    ionic_strength = float(concentration_m)
+    sqrt_i = math.sqrt(ionic_strength)
+
+    # Davies equation for log10(gamma_i)
+    log_gamma = -dh_a * (z ** 2) * ((sqrt_i / (1.0 + sqrt_i)) - davies_b * ionic_strength)
+    gamma = 10.0 ** log_gamma
+
+    # Single-ion activity: a_Cl = gamma_Cl * (c_Cl / c_0), where c_0 = 1 M standard state
+    activity = gamma * concentration_m
+    log_activity = math.log10(activity)
+
+    return {
+        "ionic_strength_m": round(ionic_strength, 6),
+        "activity_coefficient": round(gamma, 6),
+        "activity": round(activity, 6),
+        "log_activity": round(log_activity, 6),
+    }
+
+
+# ==========================================
+# Manual Plot & Step Metadata Configurations
 # ==========================================
 JSON_FILES = [
     "1C_filtered_pulses.json",
@@ -125,6 +181,26 @@ JSON_FILES = [
 ]
 
 COMBINED_METRICS_OUTPUT = "all_pulse_metrics.json"
+
+STEP_TABLE_SOURCE_URL = (
+    "https://docs.google.com/spreadsheets/d/1oRdWZKsmPEwt66wsF2v-iKb4raNI_R9KoyZY7_tnya8/edit?usp=sharing"
+)
+
+# Lookup table mapped by common "step" property
+# Source: https://docs.google.com/spreadsheets/d/1oRdWZKsmPEwt66wsF2v-iKb4raNI_R9KoyZY7_tnya8/edit?usp=sharing
+STEP_TABLE_DATA: Dict[int, dict] = {
+    0:  {"concentration_g_kg": 0.58,  "concentration_m": 0.0100, "log_m": -2.000, "net_volume_l": 0.250, "dilutions_l": 0.000},
+    1:  {"concentration_g_kg": 0.98,  "concentration_m": 0.0168, "log_m": -1.776, "net_volume_l": 0.251, "dilutions_l": 0.001},
+    2:  {"concentration_g_kg": 1.76,  "concentration_m": 0.0301, "log_m": -1.521, "net_volume_l": 0.253, "dilutions_l": 0.002},
+    3:  {"concentration_g_kg": 2.91,  "concentration_m": 0.0498, "log_m": -1.303, "net_volume_l": 0.256, "dilutions_l": 0.003},
+    4:  {"concentration_g_kg": 5.84,  "concentration_m": 0.1000, "log_m": -1.000, "net_volume_l": 0.264, "dilutions_l": 0.008},
+    5:  {"concentration_g_kg": 11.84, "concentration_m": 0.2025, "log_m": -0.694, "net_volume_l": 0.282, "dilutions_l": 0.018},
+    6:  {"concentration_g_kg": 17.66, "concentration_m": 0.3021, "log_m": -0.520, "net_volume_l": 0.302, "dilutions_l": 0.020},
+    7:  {"concentration_g_kg": 23.47, "concentration_m": 0.4015, "log_m": -0.396, "net_volume_l": 0.325, "dilutions_l": 0.023},
+    8:  {"concentration_g_kg": 29.12, "concentration_m": 0.4982, "log_m": -0.303, "net_volume_l": 0.351, "dilutions_l": 0.026},
+    9:  {"concentration_g_kg": 35.02, "concentration_m": 0.5992, "log_m": -0.222, "net_volume_l": 0.383, "dilutions_l": 0.032},
+    10: {"concentration_g_kg": 40.86, "concentration_m": 0.6992, "log_m": -0.155, "net_volume_l": 0.421, "dilutions_l": 0.038},
+}
 
 # Independent manual Y-axis limits per dataset prefix ("1C", "5C", "10C")
 # Adjust (min, max) tuples and optional ticks as desired for each figure.
@@ -209,9 +285,11 @@ def generate_pulse_figure(
         cp_off_vals = [float(p.cp_last_off) for p in s_pulses]
         delta_cp_vals = [float(p.cp_last_on - p.cp_last_off) for p in s_pulses]
         s_delta_t_vals = [float(p.temp_last_on - p.temp_last_off) for p in s_pulses]
+        s_t_amb_vals = [float(p.temp_last_off) for p in s_pulses]
 
         step_stats[s] = {
             "pulses": s_pulses,
+            "t_amb_mean": float(np.mean(s_t_amb_vals)),
             "cp_on_mean": float(np.mean(cp_on_vals)),
             "cp_on_std": float(np.std(cp_on_vals)),
             "cp_off_mean": float(np.mean(cp_off_vals)),
@@ -223,25 +301,46 @@ def generate_pulse_figure(
         }
 
     # ==========================================
-    # 2b. Build Pulse Metrics & Summary Dictionary
+    # 2b. Build Pulse Metrics, Merge Step Table & Activity Data
     # ==========================================
+    step_summaries = {}
+    for s, st in step_stats.items():
+        table_row = STEP_TABLE_DATA.get(int(s), {})
+        activity_metrics = (
+            calculate_chloride_activity(
+                concentration_m=table_row["concentration_m"],
+                temp_c=st["t_amb_mean"],
+            )
+            if "concentration_m" in table_row
+            else {}
+        )
+
+        step_summaries[str(s)] = {
+            "step": int(s),
+            **table_row,
+            **activity_metrics,
+            "pulse_count": len(st["pulses"]),
+            "delta_e_mean_mv": st["delta_cp_mean"],
+            "delta_e_std_mv": st["delta_cp_std"],
+            "e_on_mean_mv": st["cp_on_mean"],
+            "e_on_std_mv": st["cp_on_std"],
+            "e_off_mean_mv": st["cp_off_mean"],
+            "e_off_std_mv": st["cp_off_std"],
+            "delta_t_mean_c": st["delta_t_mean"],
+            "delta_t_std_c": st["delta_t_std"],
+        }
+
     metrics_output = {
         "source_file": json_filepath,
-        "step_summaries": {
-            str(s): {
-                "step": int(s),
-                "pulse_count": len(st["pulses"]),
-                "delta_e_mean_mv": st["delta_cp_mean"],
-                "delta_e_std_mv": st["delta_cp_std"],
-                "e_on_mean_mv": st["cp_on_mean"],
-                "e_on_std_mv": st["cp_on_std"],
-                "e_off_mean_mv": st["cp_off_mean"],
-                "e_off_std_mv": st["cp_off_std"],
-                "delta_t_mean_c": st["delta_t_mean"],
-                "delta_t_std_c": st["delta_t_std"],
-            }
-            for s, st in step_stats.items()
+        "concentration_table_source": STEP_TABLE_SOURCE_URL,
+        "activity_model": {
+            "equation": "Davies Equation",
+            "ion": "Cl- (z = -1)",
+            "electrolyte_assumption": "Completely dissociated 1:1 strong electrolyte (I = c)",
+            "davies_b_parameter": 0.30,
+            "reference_temperature_source": "Measured step baseline ambient temperature (temp_last_off)",
         },
+        "step_summaries": step_summaries,
     }
 
     # Assign distinct shades of blue across all 11 steps
