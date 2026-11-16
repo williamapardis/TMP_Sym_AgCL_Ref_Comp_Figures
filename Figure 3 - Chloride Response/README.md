@@ -22,3 +22,9 @@ Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data str
 ### Filtered Pulses
 ![Alt Text](combined_filtered_pulses_overlay.png)
 
+### Calculating Delta (pulseCalc.py)
+<p float="left">
+  <img src="pulse_sequence_1C.png" width="32%" />
+  <img src="pulse_sequence_5C.png" width="32%" />
+  <img src="pulse_sequence_10C.png" width="32%" />
+</p>
