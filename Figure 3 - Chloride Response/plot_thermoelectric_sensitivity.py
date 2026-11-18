@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, Tuple
+from typing import Dict, Optional, Sequence, Tuple, Union
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
@@ -12,6 +12,12 @@ import numpy as np
 METRICS_JSON_PATH = "all_pulse_metrics.json"
 OUTPUT_SENSITIVITY_PNG = "thermoelectric_sensitivity_vs_log_activity.png"
 OUTPUT_DELTA_E_PNG = "delta_e_vs_log_activity.png"
+
+# Step Selection Toggle:
+# - Range tuple (start, end): e.g., (0, 7) (inclusive)
+# - Specific list: e.g., [0, 1, 3, 5, 7]
+# - None: include all steps
+STEPS_TO_INCLUDE: Optional[Union[Tuple[int, int], Sequence[int]]] = (0, 7)
 
 BG_COLOR = "#F4F5F7"
 
@@ -47,6 +53,28 @@ SERIES_STYLES: Dict[str, dict] = {
 }
 
 
+def is_step_included(
+    step_idx: int,
+    steps_to_include: Optional[Union[Tuple[int, int], Sequence[int]]],
+) -> bool:
+    """
+    Determines whether a given integer step index should be included:
+    - None: includes all steps
+    - tuple (start, end): inclusive range [start, end]
+    - list/sequence: explicit list of step indices
+    """
+    if steps_to_include is None:
+        return True
+    if isinstance(steps_to_include, tuple):
+        if len(steps_to_include) != 2:
+            raise ValueError(
+                f"Range tuple must have length 2 (start, end), got {steps_to_include}"
+            )
+        start, end = steps_to_include
+        return start <= step_idx <= end
+    return step_idx in steps_to_include
+
+
 def bates_bower_e0_v(temp_c: np.ndarray) -> np.ndarray:
     """
     Standard potential E^0 [V] of the Ag|AgCl electrode from 0 to 90 deg C
@@ -73,12 +101,16 @@ def bates_bower_delta_e0_mv(delta_t: np.ndarray, t_amb_c: float = T_AMBIENT_C) -
 def compute_series_arrays(
     step_summaries: dict,
     mode: str = "sensitivity",
+    steps_to_include: Optional[Union[Tuple[int, int], Sequence[int]]] = STEPS_TO_INCLUDE,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Extracts log10(activity), Y values, Y standard deviations, Delta T means,
-    and Delta T standard deviations sorted by step index.
+    and Delta T standard deviations sorted by step index, filtered by steps_to_include.
     """
-    sorted_keys = sorted(step_summaries.keys(), key=lambda k: int(k))
+    sorted_keys = sorted(
+        (k for k in step_summaries.keys() if is_step_included(int(k), steps_to_include)),
+        key=lambda k: int(k),
+    )
 
     x_list = []
     y_list = []
@@ -170,6 +202,7 @@ def generate_fit_and_residual_figures(
     y_fmt: str = "%.3f",
     hollow_markers: bool = False,
     jitter_step: float = 0.0,
+    steps_to_include: Optional[Union[Tuple[int, int], Sequence[int]]] = STEPS_TO_INCLUDE,
 ) -> None:
     """
     Generates three standalone figures:
@@ -204,11 +237,19 @@ def generate_fit_and_residual_figures(
             print(f"Warning: '{series_key}' not found in metrics JSON, skipping.")
             continue
         x, y, y_err, dt_means, dt_stds = compute_series_arrays(
-            all_metrics[series_key]["step_summaries"], mode=mode
+            all_metrics[series_key]["step_summaries"],
+            mode=mode,
+            steps_to_include=steps_to_include,
         )
+        if len(x) == 0:
+            print(f"Warning: No matching steps found for '{series_key}' with filter {steps_to_include}, skipping.")
+            continue
         parsed_series[series_key] = (x, y, y_err, dt_means, dt_stds)
         x_min_global = min(x_min_global, float(np.min(x)))
         x_max_global = max(x_max_global, float(np.max(x)))
+
+    if not parsed_series:
+        raise ValueError(f"No data points remained after applying STEPS_TO_INCLUDE={steps_to_include}.")
 
     x_pad = 0.08 * (x_max_global - x_min_global) if x_max_global > x_min_global else 0.1
     x_fit_grid = np.linspace(x_min_global - x_pad, x_max_global + x_pad, 200)
@@ -258,7 +299,7 @@ def generate_fit_and_residual_figures(
         sign_str = "+" if intercept >= 0 else "-"
         eq_str = (
             f"{base_label}: $\Delta\ E = {slope:.2f}" + r"\ \log_{10}(a_{\mathrm{Cl}^-})" + f"{sign_str} {abs(intercept):.2f}$  "
-            f"($R^2 = {r2:.2f}$)"
+            f"($R^2 = {r2:.3f}$)"
         )
         fit_annotations.append((fit_color, eq_str))
 
@@ -554,6 +595,7 @@ if __name__ == "__main__":
     #     y_fmt="%.3f",
     #     hollow_markers=False,
     #     jitter_step=0.012,
+    #     steps_to_include=STEPS_TO_INCLUDE,
     # )
 
     # Figure 2: Delta E vs. log10(activity)
@@ -568,4 +610,5 @@ if __name__ == "__main__":
         y_fmt="%.2f",
         hollow_markers=False,
         jitter_step=0.0,
+        steps_to_include=STEPS_TO_INCLUDE,
     )
