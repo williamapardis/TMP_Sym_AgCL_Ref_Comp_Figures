@@ -16,7 +16,7 @@ METRICS_JSON_PATH = "all_pulse_metrics.json"
 OUTPUT_DELTA_E_PNG = "delta_e_and_lj_cp_vs_log_activity.png"
 
 # Invert L.J. CP signal sign to correct for experimental setup polarity
-INVERT_LJ_CP_SIGN = True
+INVERT_LJ_CP_SIGN = False
 
 # Step Selection Toggle:
 # - Range tuple (start, end): e.g., (0, 7) (inclusive)
@@ -38,7 +38,7 @@ STEP_AVG_WINDOW_OVERRIDES: Dict[int, Tuple[float, float]] = {
 
 # Axis limits for L.J. CP Nernst subplot (Set to None for automatic scaling)
 LJ_CP_X_LIMITS = None  # e.g., (-2.2, -0.2)
-LJ_CP_Y_LIMITS = (-185, -50)  # e.g., (-250, -50)
+LJ_CP_Y_LIMITS = None #(-180, -70)  # e.g., (-250, -50)
 
 # Axis limits for continuous L.J. CP Time-Series inset (Set to None for auto)
 LJ_CP_TS_X_LIMITS = None  # Continuous titration elapsed time [hr]
@@ -60,7 +60,7 @@ T_AMBIENT_C = 25.0       # Reference ambient temperature for Bates & Bower E^0(T
 
 # Theoretical Nernstian Slope at 25 °C for Cl- (monovalent anion: z = -1)
 # Slope = (2.3026 * R * T) / (z * F) = -59.16 mV / log10(a_Cl-)
-NERNST_SLOPE_25C = -59.16
+NERNST_SLOPE_25C = 59.16
 
 SERIES_ORDER = ["1C", "5C", "10C"]
 
@@ -481,10 +481,10 @@ def plot_lj_cp_subplot(
             avg_cp,
             yerr=std_cp,
             fmt="o",
-            color="#111827",
-            ecolor="#111827",
-            markerfacecolor=mfc,
-            markeredgecolor="#111827",
+            color="#000000",
+            ecolor="#000000",
+            markerfacecolor="#000000",
+            markeredgecolor="#000000",
             markeredgewidth=1.0,
             elinewidth=1.5,
             capsize=5.5,
@@ -498,8 +498,8 @@ def plot_lj_cp_subplot(
         y_fit = slope * x_fit + intercept
         y_ideal = NERNST_SLOPE_25C * x_fit + ideal_intercept
 
-        fit_color = "#F5A623"
-        ideal_color = "#111827"
+        fit_color = "#A0A0A0"
+        ideal_color = "#525252"
 
         ax.plot(
             x_fit,
@@ -522,7 +522,7 @@ def plot_lj_cp_subplot(
         )
 
         # Bottom-left bold text annotations
-        box_x, box_y_bottom = 0.03, 0.04
+        box_x, box_y_bottom = 0.46, 0.04 #0.46, 0.58 upper right
         line_spacing = 0.062
         sign_str = "+" if intercept >= 0 else "-"
         ideal_sign_str = "+" if ideal_intercept >= 0 else "-"
@@ -539,17 +539,17 @@ def plot_lj_cp_subplot(
             ),
         ]
 
-        ax.text(
-            box_x,
-            box_y_bottom + len(lj_annotations) * line_spacing + 0.01,
-            rf"$E_{{\mathrm{{LJ}}}} = S\,{x_label_str.strip('$')} + E^{{\circ}}_{{\mathrm{{eff}}}}$:",
-            transform=ax.transAxes,
-            fontsize=10.5,
-            fontweight="bold",
-            color="#111827",
-            va="bottom",
-            ha="left",
-        )
+        # ax.text(
+        #     box_x,
+        #     box_y_bottom + len(lj_annotations) * line_spacing + 0.01,
+        #     rf"$E_{{\mathrm{{LJ}}}} = S\,{x_label_str.strip('$')} + E^{{\circ}}_{{\mathrm{{eff}}}}$:",
+        #     transform=ax.transAxes,
+        #     fontsize=10.5,
+        #     fontweight="bold",
+        #     color="#111827",
+        #     va="bottom",
+        #     ha="left",
+        # )
 
         for idx, (txt_color, eq_text) in enumerate(lj_annotations):
             y_pos = box_y_bottom + (len(lj_annotations) - 1 - idx) * line_spacing
@@ -573,10 +573,10 @@ def plot_lj_cp_subplot(
         ax.set_ylim(LJ_CP_Y_LIMITS)
 
     # ==========================================
-    # Inset Window (Top Right): Full Continuous Titration L.J. CP Time Series [hr]
+    # Inset Window: Full Continuous Titration L.J. CP Time Series [hr]
     # ==========================================
     if SHOW_TS_INSET and not df_titration.empty:
-        ax_inset = ax.inset_axes([0.46, 0.58, 0.5, 0.35])
+        ax_inset = ax.inset_axes([0.06, 0.60, 0.5, 0.35])
         ax_inset.set_facecolor("#ffffff")
 
         avg_times_hr = []
@@ -609,7 +609,7 @@ def plot_lj_cp_subplot(
         ax_inset.plot(
             df_titration["elapsed_total_hr"],
             df_titration["L.J. CP"],
-            color="#2563EB",
+            color="#000000",
             linestyle="-",
             linewidth=1.1,
             alpha=0.9,
@@ -618,16 +618,16 @@ def plot_lj_cp_subplot(
 
         # Averaged points (black, matching the main plot)
         if avg_times_hr:
-            inset_mfc = "#ffffff" if hollow_markers else "#111827"
+            inset_mfc = "#ffffff" if hollow_markers else "#EC1F1F"
             ax_inset.errorbar(
                 avg_times_hr,
                 avg_vals_mv,
                 yerr=avg_stds_mv,
                 fmt="o",
-                color="#111827",
-                ecolor="#111827",
+                color="#EC1F1F",
+                ecolor="#EC1F1F",
                 markerfacecolor=inset_mfc,
-                markeredgecolor="#111827",
+                markeredgecolor="#EC1F1F",
                 markeredgewidth=0.9,
                 elinewidth=1.0,
                 capsize=2.5,
