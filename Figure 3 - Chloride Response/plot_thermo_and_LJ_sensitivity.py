@@ -38,13 +38,17 @@ STEP_AVG_WINDOW_OVERRIDES: Dict[int, Tuple[float, float]] = {
 
 # Axis limits for L.J. CP Nernst subplot (Set to None for automatic scaling)
 LJ_CP_X_LIMITS = None  # e.g., (-2.2, -0.2)
-LJ_CP_Y_LIMITS = None  # e.g., (-250, -50)
+LJ_CP_Y_LIMITS = (-185, -50)  # e.g., (-250, -50)
 
 # Axis limits for continuous L.J. CP Time-Series inset (Set to None for auto)
 LJ_CP_TS_X_LIMITS = None  # Continuous titration elapsed time [hr]
 LJ_CP_TS_Y_LIMITS = None
 
-# Toggle Full Titration Time-Series Inset on Figure 1 Subplot 2
+# Y-axis tick label decimal precision for Figure 1 subplots
+LJ_CP_Y_FMT = "%.0f"   # Left subplot (L.J. CP [mV])
+DELTA_E_Y_FMT = "%.1f" # Right subplot (Thermoelectric Delta E [mV])
+
+# Toggle Full Titration Time-Series Inset on Figure 1 L.J. CP Subplot
 SHOW_TS_INSET = True
 
 BG_COLOR = "#F4F5F7"
@@ -60,24 +64,27 @@ NERNST_SLOPE_25C = -59.16
 
 SERIES_ORDER = ["1C", "5C", "10C"]
 
+# Blue marker color matched to the AgCl|AgCl potential traces in the reference figure
+SERIES_MARKER_BLUE = "#1D63B8"
+
 SERIES_STYLES: Dict[str, dict] = {
     "1C": {
         "label": r"$\Delta T \approx 1\,^\circ\mathrm{C}$",
-        "point_color": "#111827",  # Near-Black
+        "point_color": SERIES_MARKER_BLUE,
         "fit_color": "#C27803",    # Darker Amber/Gold
         "marker": "o",
         "linestyle": "-",
     },
     "5C": {
         "label": r"$\Delta T \approx 5\,^\circ\mathrm{C}$",
-        "point_color": "#111827",  # Near-Black
+        "point_color": SERIES_MARKER_BLUE,
         "fit_color": "#F5A623",    # Base Golden-Amber (matched to Temperature trace)
         "marker": "s",
         "linestyle": "--",
     },
     "10C": {
         "label": r"$\Delta T \approx 10\,^\circ\mathrm{C}$",
-        "point_color": "#111827",  # Near-Black
+        "point_color": SERIES_MARKER_BLUE,
         "fit_color": "#FCD34D",    # Lighter Golden-Amber
         "marker": "^",
         "linestyle": "-.",
@@ -413,21 +420,20 @@ def plot_lj_cp_subplot(
     step_averages: Dict[int, float],
     step_std_devs: Dict[int, float],
     hollow_markers: bool = False,
+    y_fmt: str = LJ_CP_Y_FMT,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, str]:
     """
-    Renders Average L.J. CP vs. log10(Metric) on `ax` using upper-right bold text
-    annotations matching subplot 1's style, and places the continuous full-titration
-    L.J. CP time series (in hours) inside an inset window in the lower-left corner.
+    Renders Average L.J. CP vs. log10(Metric) on `ax` with bold fit text annotations
+    in the bottom-left corner, and places the continuous full-titration L.J. CP time
+    series (in hours) with averaged step markers inside an inset window in the top-right corner.
     Returns (log_x, std_cp, residuals_fit, residuals_ideal, lj_fit_slope, x_label_str) for Figure 2.
     """
     steps_sorted = sorted(step_averages.keys())
 
     if X_METRIC.lower() == "activity":
         x_label_str = r"$\log_{10}(a_{\mathrm{Cl}^-})$"
-        title_metric_str = "Activity"
     else:
         x_label_str = r"$\log_{10}([\mathrm{Cl}^-])$"
-        title_metric_str = "Concentration"
 
     log_x = []
     avg_cp = []
@@ -453,8 +459,9 @@ def plot_lj_cp_subplot(
     residuals_ideal = np.zeros_like(avg_cp)
     slope = NERNST_SLOPE_25C
 
+    mfc = BG_COLOR if hollow_markers else "#111827"
+
     if len(log_x) > 2:
-        n = len(log_x)
         res = stats.linregress(log_x, avg_cp)
         slope = float(res.slope)
         intercept = float(res.intercept)
@@ -462,7 +469,6 @@ def plot_lj_cp_subplot(
 
         y_pred_fit = slope * log_x + intercept
         residuals_fit = avg_cp - y_pred_fit
-        s_err = np.sqrt(np.sum(residuals_fit**2) / (n - 2))
 
         x_mean = np.mean(log_x)
         y_mean = np.mean(avg_cp)
@@ -470,7 +476,6 @@ def plot_lj_cp_subplot(
         y_pred_ideal = NERNST_SLOPE_25C * log_x + ideal_intercept
         residuals_ideal = avg_cp - y_pred_ideal
 
-        mfc = BG_COLOR if hollow_markers else "#111827"
         ax.errorbar(
             log_x,
             avg_cp,
@@ -516,51 +521,48 @@ def plot_lj_cp_subplot(
             zorder=3,
         )
 
-        # Upper-right bold text annotations matching subplot 1 style
-        box_x, box_y_start = 0.97, 0.96
+        # Bottom-left bold text annotations
+        box_x, box_y_bottom = 0.03, 0.04
         line_spacing = 0.062
         sign_str = "+" if intercept >= 0 else "-"
         ideal_sign_str = "+" if ideal_intercept >= 0 else "-"
 
-        ax.text(
-            box_x,
-            box_y_start + 0.01,
-            rf"$E_{{\mathrm{{LJ}}}} = S\,{x_label_str.strip('$')} + E^{{\circ}}_{{\mathrm{{eff}}}}$:",
-            transform=ax.transAxes,
-            fontsize=10.5,
-            fontweight="bold",
-            color="#111827",
-            va="top",
-            ha="right",
-        )
-
         lj_annotations = [
             (
                 fit_color,
-                f"OLS Fit (dashed): $E_{{\\mathrm{{LJ}}}} = {slope:.2f}\\,{x_label_str.strip('$')} {sign_str} {abs(intercept):.2f}$  "
-                f"($R^2 = {r_squared:.4f}$, RMSE $= {s_err:.2f}\\ \\mathrm{{mV}}$)",
+                f"OLS Fit (dashed): $E_{{\\mathrm{{LJ}}}} = {slope:.2f}\\,{x_label_str.strip('$')} {sign_str} {abs(intercept):.0f}$  "
+                f"($R^2 = {r_squared:.3f}$)",
             ),
             (
                 ideal_color,
                 f"Ideal Nernst 25°C (solid): $E_{{\\mathrm{{LJ}}}} = {NERNST_SLOPE_25C:.2f}\\,{x_label_str.strip('$')} {ideal_sign_str} {abs(ideal_intercept):.2f}$",
             ),
-            (
-                "#111827",
-                "Markers: Step Averages (±1 SD)",
-            ),
         ]
 
+        ax.text(
+            box_x,
+            box_y_bottom + len(lj_annotations) * line_spacing + 0.01,
+            rf"$E_{{\mathrm{{LJ}}}} = S\,{x_label_str.strip('$')} + E^{{\circ}}_{{\mathrm{{eff}}}}$:",
+            transform=ax.transAxes,
+            fontsize=10.5,
+            fontweight="bold",
+            color="#111827",
+            va="bottom",
+            ha="left",
+        )
+
         for idx, (txt_color, eq_text) in enumerate(lj_annotations):
+            y_pos = box_y_bottom + (len(lj_annotations) - 1 - idx) * line_spacing
             ax.text(
                 box_x,
-                box_y_start - (idx + 1) * line_spacing,
+                y_pos,
                 eq_text,
                 transform=ax.transAxes,
                 fontsize=10.5,
                 fontweight="bold",
                 color=txt_color,
-                va="top",
-                ha="right",
+                va="bottom",
+                ha="left",
             )
 
         ax.set_xlim(log_x.min() - x_pad, log_x.max() + x_pad)
@@ -571,27 +573,38 @@ def plot_lj_cp_subplot(
         ax.set_ylim(LJ_CP_Y_LIMITS)
 
     # ==========================================
-    # Inset Window: Full Continuous Titration L.J. CP Time Series [hr]
+    # Inset Window (Top Right): Full Continuous Titration L.J. CP Time Series [hr]
     # ==========================================
     if SHOW_TS_INSET and not df_titration.empty:
-        ax_inset = ax.inset_axes([0.10, 0.13, 0.43, 0.29])
+        ax_inset = ax.inset_axes([0.46, 0.58, 0.5, 0.35])
         ax_inset.set_facecolor("#ffffff")
 
+        avg_times_hr = []
+        avg_vals_mv = []
+        avg_stds_mv = []
+
         for idx_s, (step_id, group) in enumerate(df_titration.groupby("step")):
-            win_start, win_end = get_step_avg_window(int(step_id))
+            step_int = int(step_id)
+            win_start, win_end = get_step_avg_window(step_int)
             window_mask = (group["elapsed_time_step_min"] >= win_start) & (
                 group["elapsed_time_step_min"] <= win_end
             )
             win_grp = group[window_mask]
             if not win_grp.empty:
+                t_min_hr = float(win_grp["elapsed_total_hr"].min())
+                t_max_hr = float(win_grp["elapsed_total_hr"].max())
                 ax_inset.axvspan(
-                    float(win_grp["elapsed_total_hr"].min()),
-                    float(win_grp["elapsed_total_hr"].max()),
+                    t_min_hr,
+                    t_max_hr,
                     color="#94A3B8",
                     alpha=0.25,
                     label="Avg Window" if idx_s == 0 else None,
                     zorder=1,
                 )
+                if step_int in step_averages:
+                    avg_times_hr.append(float(win_grp["elapsed_total_hr"].mean()))
+                    avg_vals_mv.append(step_averages[step_int])
+                    avg_stds_mv.append(step_std_devs.get(step_int, 0.0))
 
         ax_inset.plot(
             df_titration["elapsed_total_hr"],
@@ -602,6 +615,26 @@ def plot_lj_cp_subplot(
             alpha=0.9,
             zorder=2,
         )
+
+        # Averaged points (black, matching the main plot)
+        if avg_times_hr:
+            inset_mfc = "#ffffff" if hollow_markers else "#111827"
+            ax_inset.errorbar(
+                avg_times_hr,
+                avg_vals_mv,
+                yerr=avg_stds_mv,
+                fmt="o",
+                color="#111827",
+                ecolor="#111827",
+                markerfacecolor=inset_mfc,
+                markeredgecolor="#111827",
+                markeredgewidth=0.9,
+                elinewidth=1.0,
+                capsize=2.5,
+                capthick=1.0,
+                markersize=3.4,
+                zorder=4,
+            )
 
         if LJ_CP_TS_X_LIMITS is not None:
             ax_inset.set_xlim(LJ_CP_TS_X_LIMITS)
@@ -614,28 +647,28 @@ def plot_lj_cp_subplot(
             ax_inset.set_ylim(LJ_CP_TS_Y_LIMITS)
 
         ax_inset.set_title(
-            "Full Titration L.J. CP",
+            "Titration Time Series",
             fontsize=8,
             fontweight="bold",
             color="#111827",
             pad=3,
         )
         ax_inset.set_xlabel("Elapsed Time [hr]", fontsize=7, color="#111827")
-        ax_inset.set_ylabel("L.J. CP [mV]", fontsize=7, color="#111827")
+        ax_inset.set_ylabel("$E_{Ag/AgCl}$ [mV]", fontsize=7, color="#111827")
         ax_inset.tick_params(labelsize=6.5)
         ax_inset.grid(True, linestyle=":", color="#cbd5e1", alpha=0.75)
 
     ax.set_title(
-        f"Average L.J. CP vs. {x_label_str} ({title_metric_str})",
+        "Open Circuit Potential Against L.J. Reference",
         fontsize=14,
         fontweight="bold",
         color="#111827",
         pad=12,
     )
     ax.set_xlabel(x_label_str, fontsize=13, fontweight="bold", color="#111827")
-    ax.set_ylabel(r"L.J. CP $[\mathrm{mV}]$", fontsize=13, fontweight="bold", color="#111827")
+    ax.set_ylabel(r"$E_{Ag/AgCl}$ [mV]", fontsize=13, fontweight="bold", color="#111827")
     ax.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75)
-    ax.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.2f"))
+    ax.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
 
     return log_x, std_cp, residuals_fit, residuals_ideal, slope, x_label_str
 
@@ -651,7 +684,8 @@ def generate_merged_figures(
     y_label: str,
     res_y_label: str,
     int_y_label: str,
-    y_fmt: str = "%.2f",
+    y_fmt: str = DELTA_E_Y_FMT,
+    lj_y_fmt: str = LJ_CP_Y_FMT,
     hollow_markers: bool = False,
     jitter_step: float = 0.0,
     steps_to_include: Optional[Union[Tuple[int, int], Sequence[int]]] = STEPS_TO_INCLUDE,
@@ -659,8 +693,8 @@ def generate_merged_figures(
     """
     Generates three figures:
     1. Merged 1x2 Main Figure:
-       - Left (ax_main): Thermoelectric Potential (Delta E) vs. log10(activity)
-       - Right (ax_ljcp): Average L.J. CP vs. log10(activity) with Full Time-Series Inset [hr]
+       - Left (ax_ljcp): Average L.J. CP vs. log10(activity) with Top-Right Time-Series Inset [hr]
+       - Right (ax_main): Thermoelectric Potential (Delta E) vs. log10(activity)
     2. Vertically Stacked 2x1 Residuals Figure (with aligned y = 0 across both axes):
        - Top Subplot (ax_res): Raw Residuals [mV] (Thermo Left Axis, L.J. CP Right Axis)
        - Bottom Subplot (ax_res_norm): Sensitivity-Normalized Residuals [decades] (Residual / |Slope|)
@@ -672,12 +706,12 @@ def generate_merged_figures(
     residual_output_path = f"{base_name}_residuals{ext}"
     intercept_output_path = f"{base_name}_intercepts{ext}"
 
-    # Merged 1x2 Main Figure
-    fig_main, (ax_main, ax_ljcp) = plt.subplots(
+    # Merged 1x2 Main Figure (Left: ax_ljcp, Right: ax_main)
+    fig_main, (ax_ljcp, ax_main) = plt.subplots(
         1, 2, figsize=(19.5, 6.4), facecolor=BG_COLOR
     )
-    ax_main.set_facecolor(BG_COLOR)
     ax_ljcp.set_facecolor(BG_COLOR)
+    ax_main.set_facecolor(BG_COLOR)
 
     # Vertically Stacked 2x1 Residuals Figure (Top: Raw mV, Bottom: Normalized by |Slope|)
     fig_res, (ax_res, ax_res_norm) = plt.subplots(
@@ -702,14 +736,18 @@ def generate_merged_figures(
             steps_to_include=steps_to_include,
         )
         if len(x) == 0:
-            print(f"Warning: No matching steps found for '{series_key}' with filter {steps_to_include}, skipping.")
+            print(
+                f"Warning: No matching steps found for '{series_key}' with filter {steps_to_include}, skipping."
+            )
             continue
         parsed_series[series_key] = (x, y, y_err, dt_means, dt_stds)
         x_min_global = min(x_min_global, float(np.min(x)))
         x_max_global = max(x_max_global, float(np.max(x)))
 
     if not parsed_series:
-        raise ValueError(f"No data points remained after applying STEPS_TO_INCLUDE={steps_to_include}.")
+        raise ValueError(
+            f"No data points remained after applying STEPS_TO_INCLUDE={steps_to_include}."
+        )
 
     x_pad = 0.08 * (x_max_global - x_min_global) if x_max_global > x_min_global else 0.1
     x_fit_grid = np.linspace(x_min_global - x_pad, x_max_global + x_pad, 200)
@@ -757,14 +795,16 @@ def generate_merged_figures(
 
         sign_str = "+" if intercept >= 0 else "-"
         eq_str = (
-            f"{base_label}: $\Delta\ E = {slope:.2f}" + r"\ \log_{10}(a_{\mathrm{Cl}^-})" + f"{sign_str} {abs(intercept):.2f}$  "
+            f"{base_label}: $\\Delta\\ E = {slope:.2f}"
+            + r"\ \log_{10}(a_{\mathrm{Cl}^-})"
+            + f"{sign_str} {abs(intercept):.2f}$  "
             f"($R^2 = {r2:.3f}$)"
         )
         fit_annotations.append((fit_color, eq_str))
 
         x_plot = x + (idx - (n_series - 1) / 2.0) * jitter_step
 
-        # Left Subplot of Fig 1: Linear Fit Line
+        # Right Subplot of Fig 1: Linear Fit Line
         ax_main.plot(
             x_fit_grid,
             y_fit_grid,
@@ -775,7 +815,7 @@ def generate_merged_figures(
             zorder=3,
         )
 
-        # Left Subplot of Fig 1: Solid black markers + error bars
+        # Right Subplot of Fig 1: Blue markers + error bars matching AgCl|AgCl trace palette
         mfc = BG_COLOR if hollow_markers else point_color
         ax_main.errorbar(
             x_plot,
@@ -840,7 +880,7 @@ def generate_merged_figures(
             zorder=3,
         )
 
-    # Display Linear Fit Equations & R^2 Labels in Upper Right of Left Subplot
+    # Display Linear Fit Equations & R^2 Labels in Upper Right of Right Subplot
     box_x, box_y_start = 0.97, 0.96
     line_spacing = 0.062
     ax_main.text(
@@ -868,8 +908,18 @@ def generate_merged_figures(
         )
 
     # ==========================================
-    # Formatting - Merged Figure 1 (Left & Right Subplots)
+    # Formatting - Merged Figure 1 (Left: L.J. CP | Right: Thermoelectric Delta E)
     # ==========================================
+    lj_log_x, lj_std_cp, lj_res_fit, lj_res_ideal, lj_slope, lj_x_label = plot_lj_cp_subplot(
+        ax=ax_ljcp,
+        all_metrics=all_metrics,
+        df_titration=df_titration,
+        step_averages=step_averages,
+        step_std_devs=step_std_devs,
+        hollow_markers=hollow_markers,
+        y_fmt=lj_y_fmt,
+    )
+
     ax_main.set_xlabel(
         r"$\log_{10}(a_{\mathrm{Cl}^-})$",
         fontsize=13,
@@ -881,16 +931,6 @@ def generate_merged_figures(
     ax_main.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75)
     ax_main.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
     ax_main.set_xlim(x_min_global - x_pad, x_max_global + x_pad)
-
-    # Render Right Subplot of Fig 1 (L.J. CP Average + Full Time-Series Inset)
-    lj_log_x, lj_std_cp, lj_res_fit, lj_res_ideal, lj_slope, lj_x_label = plot_lj_cp_subplot(
-        ax=ax_ljcp,
-        all_metrics=all_metrics,
-        df_titration=df_titration,
-        step_averages=step_averages,
-        step_std_devs=step_std_devs,
-        hollow_markers=hollow_markers,
-    )
 
     fig_main.tight_layout(pad=2.0)
     fig_main.savefig(
@@ -918,7 +958,7 @@ def generate_merged_figures(
             lj_res_fit,
             width=bar_width * 0.90,
             yerr=lj_std_cp,
-            color="#2563EB",
+            color=lj_res_color,
             edgecolor="#111827",
             linewidth=0.6,
             alpha=0.88,
@@ -931,16 +971,16 @@ def generate_merged_figures(
             label="L.J. CP vs. OLS Fit (Right Axis)",
             zorder=3,
         )
-
         ax_res_ljcp.bar(
             lj_log_x + offset_lj_ideal,
             lj_res_ideal,
             width=bar_width * 0.90,
             yerr=lj_std_cp,
-            color="#93C5FD",
+            color="#60A5FA",
             edgecolor="#111827",
             linewidth=0.6,
-            alpha=0.90,
+            hatch="//",
+            alpha=0.85,
             error_kw={
                 "ecolor": "#111827",
                 "elinewidth": 1.2,
@@ -951,16 +991,16 @@ def generate_merged_figures(
             zorder=3,
         )
 
-        # Bottom Subplot (Right Y-Axis): Sensitivity-Normalized L.J. CP Residuals
-        abs_lj_fit_slope = abs(lj_slope) if lj_slope != 0.0 else 1.0
-        abs_lj_ideal_slope = abs(NERNST_SLOPE_25C)
+        # Bottom Subplot (Right Y-Axis): Normalized L.J. CP Residuals [decades]
+        abs_lj_slope = abs(lj_slope) if lj_slope != 0.0 else 1.0
+        abs_nernst_slope = abs(NERNST_SLOPE_25C)
 
         ax_res_ljcp_norm.bar(
             lj_log_x + offset_lj_fit,
-            lj_res_fit / abs_lj_fit_slope,
+            lj_res_fit / abs_lj_slope,
             width=bar_width * 0.90,
-            yerr=lj_std_cp / abs_lj_fit_slope,
-            color="#2563EB",
+            yerr=lj_std_cp / abs_lj_slope,
+            color=lj_res_color,
             edgecolor="#111827",
             linewidth=0.6,
             alpha=0.88,
@@ -973,16 +1013,16 @@ def generate_merged_figures(
             label="L.J. CP vs. OLS Fit (Right Axis)",
             zorder=3,
         )
-
         ax_res_ljcp_norm.bar(
             lj_log_x + offset_lj_ideal,
-            lj_res_ideal / abs_lj_ideal_slope,
+            lj_res_ideal / abs_nernst_slope,
             width=bar_width * 0.90,
-            yerr=lj_std_cp / abs_lj_ideal_slope,
-            color="#93C5FD",
+            yerr=lj_std_cp / abs_nernst_slope,
+            color="#60A5FA",
             edgecolor="#111827",
             linewidth=0.6,
-            alpha=0.90,
+            hatch="//",
+            alpha=0.85,
             error_kw={
                 "ecolor": "#111827",
                 "elinewidth": 1.2,
@@ -993,73 +1033,50 @@ def generate_merged_figures(
             zorder=3,
         )
 
-    # Align y = 0 across both left and right axes on BOTH subplots
-    align_dual_axis_zeros(ax_res, ax_res_ljcp)
-    align_dual_axis_zeros(ax_res_norm, ax_res_ljcp_norm)
-
-    # Top Subplot Styling
-    ax_res.set_ylabel(
-        f"Thermoelectric {res_y_label}",
-        fontsize=12,
-        fontweight="bold",
-        color="#111827",
-    )
-    ax_res_ljcp.set_ylabel(
-        r"L.J. CP Residuals $[\mathrm{mV}]$",
-        fontsize=12,
-        fontweight="bold",
-        color=lj_res_color,
-    )
-    ax_res_ljcp.tick_params(axis="y", colors=lj_res_color)
-    ax_res_ljcp.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.2f"))
+    ax_res.set_ylabel(res_y_label, fontsize=12, fontweight="bold", color="#111827")
     ax_res.set_title(
-        "Linear Fit Residuals — Raw Potential [mV] (Top) & Sensitivity-Normalized (Bottom)",
+        "Linear Fit Residuals Comparison",
         fontsize=13.5,
         fontweight="bold",
         color="#111827",
-        pad=12,
+        pad=10,
     )
     ax_res.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75, zorder=0)
-    ax_res.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
     ax_res.set_xlim(x_min_global - x_pad, x_max_global + x_pad)
+
+    ax_res_ljcp.set_ylabel(
+        r"L.J. CP Residual [mV]", fontsize=12, fontweight="bold", color=lj_res_color
+    )
+    ax_res_ljcp.tick_params(axis="y", colors=lj_res_color)
+    align_dual_axis_zeros(ax_res, ax_res_ljcp)
 
     handles_left, labels_left = ax_res.get_legend_handles_labels()
     handles_right, labels_right = ax_res_ljcp.get_legend_handles_labels()
-    leg_res = ax_res.legend(
+    ax_res.legend(
         handles_left + handles_right,
         labels_left + labels_right,
-        loc="best",
-        frameon=True,
-        fontsize=8.8,
+        loc="upper left",
         ncol=2,
+        frameon=True,
+        facecolor="#ffffff",
+        edgecolor="#cbd5e1",
+        fontsize=9.5,
     )
-    leg_res.get_frame().set_facecolor("#ffffff")
-    leg_res.get_frame().set_alpha(0.9)
 
-    # Bottom Subplot Styling (Sensitivity-Normalized Residuals)
-    ax_res_norm.set_xlabel(
-        lj_x_label,
-        fontsize=13,
-        fontweight="bold",
-        color="#111827",
-    )
+    ax_res_norm.set_xlabel(lj_x_label, fontsize=13, fontweight="bold", color="#111827")
     ax_res_norm.set_ylabel(
-        r"Normalized Thermo Res. $[\mathrm{dec}]$",
-        fontsize=12,
-        fontweight="bold",
-        color="#111827",
+        r"Normalized Residual [decades]", fontsize=12, fontweight="bold", color="#111827"
     )
+    ax_res_norm.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75, zorder=0)
+
     ax_res_ljcp_norm.set_ylabel(
-        r"Normalized L.J. CP Res. $[\mathrm{dec}]$",
+        r"L.J. CP Norm. Residual [decades]",
         fontsize=12,
         fontweight="bold",
         color=lj_res_color,
     )
     ax_res_ljcp_norm.tick_params(axis="y", colors=lj_res_color)
-    ax_res_ljcp_norm.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.3f"))
-    ax_res_norm.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75, zorder=0)
-    ax_res_norm.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.3f"))
-    ax_res_norm.set_xlim(x_min_global - x_pad, x_max_global + x_pad)
+    align_dual_axis_zeros(ax_res_norm, ax_res_ljcp_norm)
 
     fig_res.tight_layout(pad=2.0)
     fig_res.savefig(
@@ -1068,121 +1085,77 @@ def generate_merged_figures(
         bbox_inches="tight",
         facecolor=fig_res.get_facecolor(),
     )
-    print(f"Saved vertically stacked dual-axis residuals figure to {residual_output_path}")
+    print(f"Saved residuals figure to {residual_output_path}")
 
     # ==========================================
-    # Figure 3: Intercepts vs. Theoretical Delta T (from Slope S)
+    # Formatting - Figure 3 (Intercepts vs. Theoretical Delta T)
     # ==========================================
-    t_arr = np.array(theo_temp_vals, dtype=float)
-    t_err_arr = np.array(theo_temp_errs, dtype=float)
-    b_arr = np.array(intercept_vals, dtype=float)
-    b_err_arr = np.array(intercept_errs, dtype=float)
+    theo_temp_arr = np.array(theo_temp_vals, dtype=float)
+    theo_temp_err_arr = np.array(theo_temp_errs, dtype=float)
+    intercept_arr = np.array(intercept_vals, dtype=float)
+    intercept_err_arr = np.array(intercept_errs, dtype=float)
 
-    t_slope, _, t_intercept, _, t_r2, _, _ = linear_fit_with_r2(t_arr, b_arr)
+    if len(theo_temp_arr) > 0:
+        dt_max_plot = max(float(np.max(theo_temp_arr + theo_temp_err_arr)) * 1.15, 11.0)
+        dt_curve = np.linspace(0.0, dt_max_plot, 200)
+        e0_curve = bates_bower_delta_e0_mv(dt_curve, t_amb_c=T_AMBIENT_C)
 
-    t_min, t_max = float(np.min(t_arr)), float(np.max(t_arr))
-    t_pad = 0.12 * (t_max - t_min) if t_max > t_min else 0.5
-    t_fit_grid = np.linspace(max(0.0, t_min - t_pad), t_max + t_pad, 200)
-    b_fit_grid = t_slope * t_fit_grid + t_intercept
-
-    neg_e0_theo_grid = -bates_bower_delta_e0_mv(t_fit_grid, t_amb_c=T_AMBIENT_C)
-    linear_06_grid = 0.6 * t_fit_grid
-
-    ax_int.plot(
-        t_fit_grid,
-        b_fit_grid,
-        color="#111827",
-        linestyle="--",
-        linewidth=2.2,
-        alpha=0.95,
-        label="Experimental Linear Fit",
-        zorder=3,
-    )
-
-    ax_int.plot(
-        t_fit_grid,
-        neg_e0_theo_grid,
-        color="#F5A623",
-        linestyle="-",
-        linewidth=2.2,
-        alpha=0.95,
-        label=rf"Bates & Bower (1954) $-\Delta E^\circ$ ($T_0={T_AMBIENT_C:.0f}\,^\circ\mathrm{{C}}$)",
-        zorder=4,
-    )
-
-    ax_int.plot(
-        t_fit_grid,
-        linear_06_grid,
-        color="#C27803",
-        linestyle="-.",
-        linewidth=2.2,
-        alpha=0.95,
-        label=r"Simple Linear Model ($0.6\ \mathrm{mV/^\circ C}$)",
-        zorder=4,
-    )
-
-    mfc = BG_COLOR if hollow_markers else "#111827"
-    for t_val, t_err, b_val, b_err, mkr in zip(
-        t_arr, t_err_arr, b_arr, b_err_arr, series_markers
-    ):
-        ax_int.errorbar(
-            t_val,
-            b_val,
-            xerr=t_err,
-            yerr=b_err,
-            fmt=mkr,
-            color="#111827",
-            ecolor="#111827",
-            markerfacecolor=mfc,
-            markeredgecolor="#111827",
-            markeredgewidth=1.0,
-            markersize=5.2,
-            elinewidth=1.6,
-            capsize=6.0,
-            capthick=1.6,
-            linestyle="none",
-            zorder=5,
+        ax_int.plot(
+            dt_curve,
+            e0_curve,
+            color="#2563EB",
+            linestyle="-",
+            linewidth=2.0,
+            label=rf"Bates & Bower $\Delta E^\circ(\Delta T)$ ($T_0 = {T_AMBIENT_C:.0f}\,^\circ\mathrm{{C}}$)",
+            zorder=2,
         )
 
-    t_sign_str = "+" if t_intercept >= 0 else "-"
-    t_eq_str = (
-        f"$b = {t_slope:.4f}\\,\\Delta T_{{S}} {t_sign_str} {abs(t_intercept):.4f}$\n"
-        f"$R^2 = {t_r2:.4f}$"
-    )
-    text_x, text_ha = (0.04, "left") if t_slope > 0 else (0.96, "right")
-    ax_int.text(
-        text_x,
-        0.95,
-        t_eq_str,
-        transform=ax_int.transAxes,
-        fontsize=11,
-        fontweight="bold",
-        color="#111827",
-        va="top",
-        ha=text_ha,
-    )
+        for idx, series_key in enumerate(active_keys):
+            style = SERIES_STYLES[series_key]
+            ax_int.errorbar(
+                theo_temp_arr[idx],
+                intercept_arr[idx],
+                xerr=theo_temp_err_arr[idx],
+                yerr=intercept_err_arr[idx],
+                fmt=style["marker"],
+                color=style["point_color"],
+                ecolor=style["point_color"],
+                markerfacecolor=style["fit_color"],
+                markeredgecolor=style["point_color"],
+                markeredgewidth=1.1,
+                markersize=6.5,
+                elinewidth=1.5,
+                capsize=5.0,
+                capthick=1.5,
+                label=style["label"],
+                zorder=4,
+            )
 
+    ax_int.axhline(0.0, color="#64748B", linestyle=":", linewidth=1.1, zorder=1)
     ax_int.set_xlabel(
-        r"Theoretical Temperature Difference, $\Delta T = |S|\frac{F}{\ln(10)\,R}\ [^\circ\mathrm{C}]$",
+        r"Slope-Derived $\Delta T_{\mathrm{theo}}$ [$^\circ\mathrm{C}$]",
         fontsize=12.5,
         fontweight="bold",
         color="#111827",
     )
-    ax_int.set_ylabel(int_y_label, fontsize=13, fontweight="bold", color="#111827")
+    ax_int.set_ylabel(int_y_label, fontsize=12.5, fontweight="bold", color="#111827")
     ax_int.set_title(
-        f"Linear Fit Intercepts vs. Theoretical $\\Delta T$ — {title}",
+        r"Extrapolated $E^{\circ}(\Delta T)$ vs. Slope-Derived $\Delta T$",
         fontsize=13.5,
         fontweight="bold",
         color="#111827",
         pad=12,
     )
     ax_int.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75)
-    leg_int = ax_int.legend(loc="lower right", frameon=True, fontsize=9.5)
-    leg_int.get_frame().set_facecolor("#ffffff")
-    leg_int.get_frame().set_alpha(0.88)
-    ax_int.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
-    ax_int.set_xlim(max(0.0, t_min - t_pad), t_max + t_pad)
+    ax_int.legend(
+        loc="best",
+        frameon=True,
+        facecolor="#ffffff",
+        edgecolor="#cbd5e1",
+        fontsize=10,
+    )
 
+    fig_int.tight_layout(pad=1.8)
     fig_int.savefig(
         intercept_output_path,
         dpi=300,
@@ -1191,31 +1164,27 @@ def generate_merged_figures(
     )
     print(f"Saved intercepts figure to {intercept_output_path}")
 
-    plt.show()
-    plt.close(fig_main)
-    plt.close(fig_res)
-    plt.close(fig_int)
-
 
 if __name__ == "__main__":
-    metrics_data, df_titration, lj_cp_means, lj_cp_stds = parse_and_update_lj_cp_metrics(
+    all_metrics, df_titration, step_averages, step_std_devs = parse_and_update_lj_cp_metrics(
         txt_path=TITRATION_TXT_PATH,
         metrics_json_path=METRICS_JSON_PATH,
         steps_to_include=STEPS_TO_INCLUDE,
     )
 
     generate_merged_figures(
-        all_metrics=metrics_data,
+        all_metrics=all_metrics,
         df_titration=df_titration,
-        step_averages=lj_cp_means,
-        step_std_devs=lj_cp_stds,
+        step_averages=step_averages,
+        step_std_devs=step_std_devs,
         output_path=OUTPUT_DELTA_E_PNG,
         mode="delta_e",
-        title=r"Thermoelectric Potential ($\Delta E$) vs. $\log_{10}(a_{\mathrm{Cl}^-})$",
-        y_label=r"$\Delta E\ [\mathrm{mV}]$",
-        res_y_label=r"Residuals $[\mathrm{mV}]$",
-        int_y_label=r"Intercept, $b\ [\mathrm{mV}]$",
-        y_fmt="%.2f",
+        title="Thermoelectric Potential vs. Chloride Activity",
+        y_label=r"$\Delta E$ [mV]",
+        res_y_label=r"Thermo Residual [mV]",
+        int_y_label=r"Intercept $E^{\circ}(\Delta T)$ [mV]",
+        y_fmt=DELTA_E_Y_FMT,
+        lj_y_fmt=LJ_CP_Y_FMT,
         hollow_markers=False,
         jitter_step=0.0,
         steps_to_include=STEPS_TO_INCLUDE,
