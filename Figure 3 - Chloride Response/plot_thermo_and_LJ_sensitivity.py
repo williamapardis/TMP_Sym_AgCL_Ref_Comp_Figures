@@ -232,6 +232,8 @@ def parse_and_update_lj_cp_metrics(
     df["step"] = pd.to_numeric(df["step"], errors="coerce")
     df["L.J. CP"] = pd.to_numeric(df["L.J. CP"], errors="coerce")
 
+    df["L.J. CP"] = df["L.J. CP"]-1193/5
+
     if INVERT_LJ_CP_SIGN:
         df["L.J. CP"] = -1.0 * df["L.J. CP"]
 
@@ -522,7 +524,7 @@ def plot_lj_cp_subplot(
         )
 
         # Bottom-left bold text annotations
-        box_x, box_y_bottom = 0.46, 0.04 #0.46, 0.58 upper right
+        box_x, box_y_bottom = 0.01, 0.78 #0.46, 0.58 upper right
         line_spacing = 0.062
         sign_str = "+" if intercept >= 0 else "-"
         ideal_sign_str = "+" if ideal_intercept >= 0 else "-"
@@ -576,7 +578,7 @@ def plot_lj_cp_subplot(
     # Inset Window: Full Continuous Titration L.J. CP Time Series [hr]
     # ==========================================
     if SHOW_TS_INSET and not df_titration.empty:
-        ax_inset = ax.inset_axes([0.06, 0.60, 0.5, 0.35])
+        ax_inset = ax.inset_axes([0.46, 0.09, 0.5, 0.35])
         ax_inset.set_facecolor("#ffffff")
 
         avg_times_hr = []
