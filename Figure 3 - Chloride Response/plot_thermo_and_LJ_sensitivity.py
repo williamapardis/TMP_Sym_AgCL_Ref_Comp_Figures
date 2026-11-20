@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Dict, Optional, Sequence, Tuple, Union
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
@@ -24,7 +25,7 @@ INVERT_LJ_CP_SIGN = False
 # - None: include all steps
 STEPS_TO_INCLUDE: Optional[Union[Tuple[int, int], Sequence[int]]] = (0, 7)
 
-# Toggle x-axis metric for L.J. CP subplot: "activity" or "concentration"
+# Toggle x-axis metric for L.J. CP Nernst inset: "activity" or "concentration"
 X_METRIC = "activity"
 
 # Default time window for L.J. CP averaging within each step (in minutes)
@@ -33,23 +34,28 @@ AVG_WINDOW_END = 85
 
 # Per-step averaging window overrides: {step_id: (start_min, end_min)}
 STEP_AVG_WINDOW_OVERRIDES: Dict[int, Tuple[float, float]] = {
-    0: (70, 110),
+    #0: (70, 110),
 }
 
-# Axis limits for L.J. CP Nernst subplot (Set to None for automatic scaling)
+# Axis limits for L.J. CP Nernst inset (Set to None for automatic scaling)
 LJ_CP_X_LIMITS = None  # e.g., (-2.2, -0.2)
-LJ_CP_Y_LIMITS = None #(-180, -70)  # e.g., (-250, -50)
+LJ_CP_Y_LIMITS = (-170, -60)
 
-# Axis limits for continuous L.J. CP Time-Series inset (Set to None for auto)
+# Axis limits for continuous L.J. CP Time-Series main subplot (Set to None for auto)
 LJ_CP_TS_X_LIMITS = None  # Continuous titration elapsed time [hr]
-LJ_CP_TS_Y_LIMITS = None
+LJ_CP_TS_Y_LIMITS = (-200, -60)
 
 # Y-axis tick label decimal precision for Figure 1 subplots
 LJ_CP_Y_FMT = "%.0f"   # Left subplot (L.J. CP [mV])
 DELTA_E_Y_FMT = "%.1f" # Right subplot (Thermoelectric Delta E [mV])
 
-# Toggle Full Titration Time-Series Inset on Figure 1 L.J. CP Subplot
-SHOW_TS_INSET = True
+# Toggle Linear Nernst Inset on Figure 1 L.J. CP Subplot
+SHOW_NERNST_INSET = True
+
+# Nernst Slope Triangle Controls (in inset data units: log10(a_Cl-) and mV)
+SLOPE_TRI_DX = 0.55        # Horizontal base width of the triangle [decades]
+SLOPE_TRI_ANCHOR_X = -0.9  # X-coordinate of the triangle's right-angle corner (right edge)
+SLOPE_TRI_ANCHOR_Y = -140  # Y-coordinate of the triangle's bottom edge [mV]
 
 BG_COLOR = "#F4F5F7"
 
@@ -232,7 +238,7 @@ def parse_and_update_lj_cp_metrics(
     df["step"] = pd.to_numeric(df["step"], errors="coerce")
     df["L.J. CP"] = pd.to_numeric(df["L.J. CP"], errors="coerce")
 
-    df["L.J. CP"] = df["L.J. CP"]-1193/5
+    df["L.J. CP"] = df["L.J. CP"] - 1193 / 5
 
     if INVERT_LJ_CP_SIGN:
         df["L.J. CP"] = -1.0 * df["L.J. CP"]
@@ -425,9 +431,12 @@ def plot_lj_cp_subplot(
     y_fmt: str = LJ_CP_Y_FMT,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, str]:
     """
-    Renders Average L.J. CP vs. log10(Metric) on `ax` with bold fit text annotations
-    in the bottom-left corner, and places the continuous full-titration L.J. CP time
-    series (in hours) with averaged step markers inside an inset window in the top-right corner.
+    Renders the continuous full-titration L.J. CP time series (in hours) with
+    compact red-tinted rectangular boxes around the averaging window data,
+    averaged step markers, and a frameless upper-left legend on the main `ax`,
+    and places Average L.J. CP vs. log10(Metric) with an OLS fit line, a
+    frameless legend, and a configurable theoretical Nernst slope triangle
+    inside an inset window in the bottom-right corner.
     Returns (log_x, std_cp, residuals_fit, residuals_ideal, lj_fit_slope, x_label_str) for Figure 2.
     """
     steps_sorted = sorted(step_averages.keys())
@@ -460,8 +469,9 @@ def plot_lj_cp_subplot(
     residuals_fit = np.zeros_like(avg_cp)
     residuals_ideal = np.zeros_like(avg_cp)
     slope = NERNST_SLOPE_25C
-
-    mfc = BG_COLOR if hollow_markers else "#111827"
+    intercept = 0.0
+    r_squared = 1.0
+    ideal_intercept = 0.0
 
     if len(log_x) > 2:
         res = stats.linregress(log_x, avg_cp)
@@ -478,114 +488,17 @@ def plot_lj_cp_subplot(
         y_pred_ideal = NERNST_SLOPE_25C * log_x + ideal_intercept
         residuals_ideal = avg_cp - y_pred_ideal
 
-        ax.errorbar(
-            log_x,
-            avg_cp,
-            yerr=std_cp,
-            fmt="o",
-            color="#000000",
-            ecolor="#000000",
-            markerfacecolor="#000000",
-            markeredgecolor="#000000",
-            markeredgewidth=1.0,
-            elinewidth=1.5,
-            capsize=5.5,
-            capthick=1.5,
-            markersize=4.8,
-            zorder=5,
-        )
-
-        x_pad = 0.08 * (log_x.max() - log_x.min()) if log_x.max() > log_x.min() else 0.1
-        x_fit = np.linspace(log_x.min() - x_pad, log_x.max() + x_pad, 200)
-        y_fit = slope * x_fit + intercept
-        y_ideal = NERNST_SLOPE_25C * x_fit + ideal_intercept
-
-        fit_color = "#A0A0A0"
-        ideal_color = "#525252"
-
-        ax.plot(
-            x_fit,
-            y_fit,
-            color=fit_color,
-            linestyle="--",
-            linewidth=2.2,
-            alpha=0.95,
-            zorder=4,
-        )
-
-        ax.plot(
-            x_fit,
-            y_ideal,
-            color=ideal_color,
-            linestyle="-",
-            linewidth=1.8,
-            alpha=0.9,
-            zorder=3,
-        )
-
-        # Bottom-left bold text annotations
-        box_x, box_y_bottom = 0.01, 0.78 #0.46, 0.58 upper right
-        line_spacing = 0.062
-        sign_str = "+" if intercept >= 0 else "-"
-        ideal_sign_str = "+" if ideal_intercept >= 0 else "-"
-
-        lj_annotations = [
-            (
-                fit_color,
-                f"OLS Fit (dashed): $E_{{\\mathrm{{LJ}}}} = {slope:.2f}\\,{x_label_str.strip('$')} {sign_str} {abs(intercept):.0f}$  "
-                f"($R^2 = {r_squared:.3f}$)",
-            ),
-            (
-                ideal_color,
-                f"Ideal Nernst 25°C (solid): $E_{{\\mathrm{{LJ}}}} = {NERNST_SLOPE_25C:.2f}\\,{x_label_str.strip('$')} {ideal_sign_str} {abs(ideal_intercept):.2f}$",
-            ),
-        ]
-
-        # ax.text(
-        #     box_x,
-        #     box_y_bottom + len(lj_annotations) * line_spacing + 0.01,
-        #     rf"$E_{{\mathrm{{LJ}}}} = S\,{x_label_str.strip('$')} + E^{{\circ}}_{{\mathrm{{eff}}}}$:",
-        #     transform=ax.transAxes,
-        #     fontsize=10.5,
-        #     fontweight="bold",
-        #     color="#111827",
-        #     va="bottom",
-        #     ha="left",
-        # )
-
-        for idx, (txt_color, eq_text) in enumerate(lj_annotations):
-            y_pos = box_y_bottom + (len(lj_annotations) - 1 - idx) * line_spacing
-            ax.text(
-                box_x,
-                y_pos,
-                eq_text,
-                transform=ax.transAxes,
-                fontsize=10.5,
-                fontweight="bold",
-                color=txt_color,
-                va="bottom",
-                ha="left",
-            )
-
-        ax.set_xlim(log_x.min() - x_pad, log_x.max() + x_pad)
-
-    if LJ_CP_X_LIMITS is not None:
-        ax.set_xlim(LJ_CP_X_LIMITS)
-    if LJ_CP_Y_LIMITS is not None:
-        ax.set_ylim(LJ_CP_Y_LIMITS)
-
     # ==========================================
-    # Inset Window: Full Continuous Titration L.J. CP Time Series [hr]
+    # Main Subplot: Full Continuous Titration L.J. CP Time Series [hr]
     # ==========================================
-    if SHOW_TS_INSET and not df_titration.empty:
-        ax_inset = ax.inset_axes([0.46, 0.09, 0.5, 0.35])
-        ax_inset.set_facecolor("#ffffff")
-
+    if not df_titration.empty:
         avg_times_hr = []
         avg_vals_mv = []
         avg_stds_mv = []
+        y_pad_box = 1.0  # Vertical padding [mV] above/below local trace in window
+        avg_win_patch = None
 
-        for idx_s, (step_id, group) in enumerate(df_titration.groupby("step")):
+        for step_id, group in df_titration.groupby("step"):
             step_int = int(step_id)
             win_start, win_end = get_step_avg_window(step_int)
             window_mask = (group["elapsed_time_step_min"] >= win_start) & (
@@ -595,70 +508,83 @@ def plot_lj_cp_subplot(
             if not win_grp.empty:
                 t_min_hr = float(win_grp["elapsed_total_hr"].min())
                 t_max_hr = float(win_grp["elapsed_total_hr"].max())
-                ax_inset.axvspan(
-                    t_min_hr,
-                    t_max_hr,
-                    color="#94A3B8",
-                    alpha=0.25,
-                    label="Avg Window" if idx_s == 0 else None,
+                y_min_win = float(win_grp["L.J. CP"].min()) - y_pad_box
+                y_max_win = float(win_grp["L.J. CP"].max()) + y_pad_box
+
+                rect = mpatches.Rectangle(
+                    (t_min_hr, y_min_win),
+                    width=t_max_hr - t_min_hr,
+                    height=y_max_win - y_min_win,
+                    facecolor="#EF4444",
+                    edgecolor="#EF4444",
+                    linewidth=0.8,
+                    alpha=0.16,
                     zorder=1,
                 )
+                ax.add_patch(rect)
+                if avg_win_patch is None:
+                    avg_win_patch = rect
+
                 if step_int in step_averages:
                     avg_times_hr.append(float(win_grp["elapsed_total_hr"].mean()))
                     avg_vals_mv.append(step_averages[step_int])
                     avg_stds_mv.append(step_std_devs.get(step_int, 0.0))
 
-        ax_inset.plot(
+        (line_ocp,) = ax.plot(
             df_titration["elapsed_total_hr"],
             df_titration["L.J. CP"],
             color="#000000",
             linestyle="-",
-            linewidth=1.1,
+            linewidth=1.5,
             alpha=0.9,
             zorder=2,
         )
 
-        # Averaged points (black, matching the main plot)
+        legend_handles = [line_ocp]
+        legend_labels = ["L.J. OCP"]
+
+        if avg_win_patch is not None:
+            legend_handles.append(avg_win_patch)
+            legend_labels.append("Avg. Window")
+
         if avg_times_hr:
-            inset_mfc = "#ffffff" if hollow_markers else "#EC1F1F"
-            ax_inset.errorbar(
+            main_mfc = BG_COLOR if hollow_markers else "#EC1F1F"
+            err_step = ax.errorbar(
                 avg_times_hr,
                 avg_vals_mv,
                 yerr=avg_stds_mv,
                 fmt="o",
                 color="#EC1F1F",
                 ecolor="#EC1F1F",
-                markerfacecolor=inset_mfc,
+                markerfacecolor=main_mfc,
                 markeredgecolor="#EC1F1F",
-                markeredgewidth=0.9,
-                elinewidth=1.0,
-                capsize=2.5,
-                capthick=1.0,
-                markersize=3.4,
+                markeredgewidth=1.1,
+                elinewidth=1.5,
+                capsize=4.5,
+                capthick=1.5,
+                markersize=5.0,
                 zorder=4,
             )
+            legend_handles.append(err_step)
+            legend_labels.append(r"Step Mean $\pm$ SD")
+
+        ax.legend(
+            legend_handles,
+            legend_labels,
+            loc="upper left",
+            frameon=False,
+            fontsize=9.5,
+        )
 
         if LJ_CP_TS_X_LIMITS is not None:
-            ax_inset.set_xlim(LJ_CP_TS_X_LIMITS)
+            ax.set_xlim(LJ_CP_TS_X_LIMITS)
         else:
-            ax_inset.set_xlim(
+            ax.set_xlim(
                 float(df_titration["elapsed_total_hr"].min()),
                 float(df_titration["elapsed_total_hr"].max()),
             )
         if LJ_CP_TS_Y_LIMITS is not None:
-            ax_inset.set_ylim(LJ_CP_TS_Y_LIMITS)
-
-        ax_inset.set_title(
-            "Titration Time Series",
-            fontsize=8,
-            fontweight="bold",
-            color="#111827",
-            pad=3,
-        )
-        ax_inset.set_xlabel("Elapsed Time [hr]", fontsize=7, color="#111827")
-        ax_inset.set_ylabel("$E_{Ag/AgCl}$ [mV]", fontsize=7, color="#111827")
-        ax_inset.tick_params(labelsize=6.5)
-        ax_inset.grid(True, linestyle=":", color="#cbd5e1", alpha=0.75)
+            ax.set_ylim(LJ_CP_TS_Y_LIMITS)
 
     ax.set_title(
         "Open Circuit Potential Against L.J. Reference",
@@ -667,10 +593,118 @@ def plot_lj_cp_subplot(
         color="#111827",
         pad=12,
     )
-    ax.set_xlabel(x_label_str, fontsize=13, fontweight="bold", color="#111827")
-    ax.set_ylabel(r"$E_{Ag/AgCl}$ [mV]", fontsize=13, fontweight="bold", color="#111827")
+    ax.set_xlabel("Elapsed Time [hr]", fontsize=13, fontweight="bold", color="#111827")
+    ax.set_ylabel(r"$E_{\mathbf{Ag/AgCl}}$ [mV]", fontsize=13, fontweight="bold", color="#111827")
     ax.grid(True, linestyle="--", color="#cbd5e1", alpha=0.75)
     ax.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
+
+    # ==========================================
+    # Inset Window: Average L.J. CP vs. log10(Metric)
+    # ==========================================
+    if SHOW_NERNST_INSET and len(log_x) > 0:
+        ax_inset = ax.inset_axes([0.45, 0.08, 0.53, 0.43])
+        ax_inset.set_facecolor("#ffffff")
+
+        inset_mfc = "#ffffff" if hollow_markers else "#EC1F1F"
+        err_inset = ax_inset.errorbar(
+            log_x,
+            avg_cp,
+            yerr=std_cp,
+            fmt="o",
+            color="#EC1F1F",
+            ecolor="#EC1F1F",
+            markerfacecolor=inset_mfc,
+            markeredgecolor="#EC1F1F",
+            markeredgewidth=0.9,
+            elinewidth=1.1,
+            capsize=3.0,
+            capthick=1.1,
+            markersize=3.6,
+            zorder=5,
+        )
+
+        x_pad = 0.08 * (log_x.max() - log_x.min()) if log_x.max() > log_x.min() else 0.1
+        x_min_in = LJ_CP_X_LIMITS[0] if LJ_CP_X_LIMITS is not None else (log_x.min() - x_pad)
+        x_max_in = LJ_CP_X_LIMITS[1] if LJ_CP_X_LIMITS is not None else (log_x.max() + x_pad)
+
+        inset_handles = [err_inset]
+        inset_labels = [r"Step Mean $\pm$ SD"]
+
+        if len(log_x) > 2:
+            x_fit = np.linspace(x_min_in, x_max_in, 200)
+            y_fit = slope * x_fit + intercept
+
+            fit_color = "#A0A0A0"
+
+            (line_ols,) = ax_inset.plot(
+                x_fit,
+                y_fit,
+                color=fit_color,
+                linestyle="--",
+                linewidth=1.5,
+                alpha=0.95,
+                zorder=4,
+            )
+
+            inset_handles.append(line_ols)
+            inset_labels.append(f"OLS Fit: {slope:.1f} mV/dec ($R^2={r_squared:.3f}$)")
+
+        ax_inset.legend(
+            inset_handles,
+            inset_labels,
+            loc="upper left",
+            frameon=False,
+            fontsize=8.0,
+            handlelength=1.8,
+            labelspacing=0.35,
+            borderpad=0.25,
+        )
+
+        ax_inset.set_xlim(x_min_in, x_max_in)
+        if LJ_CP_Y_LIMITS is not None:
+            ax_inset.set_ylim(LJ_CP_Y_LIMITS)
+
+        # Draw theoretical Nernst slope triangle using manual size and position controls
+        dx_tri = float(SLOPE_TRI_DX)
+        dy_tri = NERNST_SLOPE_25C * dx_tri
+
+        x_right_tri = float(SLOPE_TRI_ANCHOR_X)
+        x_left_tri = x_right_tri - dx_tri
+        y_bot_tri = float(SLOPE_TRI_ANCHOR_Y)
+        y_top_tri = y_bot_tri + dy_tri
+
+        ax_inset.plot(
+            [x_left_tri, x_right_tri, x_right_tri, x_left_tri],
+            [y_bot_tri, y_bot_tri, y_top_tri, y_bot_tri],
+            color="#4B5563",
+            linestyle="-",
+            linewidth=1.2,
+            zorder=4,
+        )
+        ax_inset.text(
+            x_right_tri - 0.05 * dx_tri,
+            y_bot_tri + 0.30 * dy_tri,
+            f"Ideal 25°C:\n{NERNST_SLOPE_25C:.1f} mV/dec",
+            fontsize=7.2,
+            fontweight="bold",
+            color="#374151",
+            ha="right",
+            va="center",
+            zorder=5,
+        )
+
+        ax_inset.set_title(
+            "Nernstian Calibration",
+            fontsize=8.5,
+            fontweight="bold",
+            color="#111827",
+            pad=3,
+        )
+        ax_inset.set_xlabel(x_label_str, fontsize=7.5, fontweight="bold", color="#111827", labelpad=1.5)
+        ax_inset.set_ylabel(r"$E_{\mathrm{Ag/AgCl}}$ [mV]", fontsize=7.5, fontweight="bold", color="#111827", labelpad=1.5)
+        ax_inset.tick_params(labelsize=6.5)
+        ax_inset.grid(True, linestyle=":", color="#cbd5e1", alpha=0.75)
+        ax_inset.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
 
     return log_x, std_cp, residuals_fit, residuals_ideal, slope, x_label_str
 
@@ -695,7 +729,7 @@ def generate_merged_figures(
     """
     Generates three figures:
     1. Merged 1x2 Main Figure:
-       - Left (ax_ljcp): Average L.J. CP vs. log10(activity) with Top-Right Time-Series Inset [hr]
+       - Left (ax_ljcp): Continuous L.J. CP Time Series [hr] with Nernst Linear Fit Inset
        - Right (ax_main): Thermoelectric Potential (Delta E) vs. log10(activity)
     2. Vertically Stacked 2x1 Residuals Figure (with aligned y = 0 across both axes):
        - Top Subplot (ax_res): Raw Residuals [mV] (Thermo Left Axis, L.J. CP Right Axis)
@@ -703,6 +737,8 @@ def generate_merged_figures(
     3. Intercepts vs. Theoretical Temperature Figure.
     """
     plt.rcdefaults()
+    # Force bold rendering for all $...$ mathtext expressions across all axes
+    plt.rcParams["mathtext.default"] = "bf"
 
     base_name, ext = os.path.splitext(output_path)
     residual_output_path = f"{base_name}_residuals{ext}"
