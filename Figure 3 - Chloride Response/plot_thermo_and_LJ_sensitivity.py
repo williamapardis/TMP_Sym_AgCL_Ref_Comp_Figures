@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -333,9 +333,9 @@ def compute_series_arrays(
     step_summaries: dict,
     mode: str = "delta_e",
     steps_to_include: Optional[Union[Tuple[int, int], Sequence[int]]] = STEPS_TO_INCLUDE,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> Tuple[List[int], np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
-    Extracts log10(activity), Y values, Y standard deviations, Delta T means,
+    Extracts step IDs, log10(activity), Y values, Y standard deviations, Delta T means,
     and Delta T standard deviations sorted by step index, filtered by steps_to_include.
     """
     sorted_keys = sorted(
@@ -343,6 +343,7 @@ def compute_series_arrays(
         key=lambda k: int(k),
     )
 
+    step_ids = []
     x_list = []
     y_list = []
     y_err_list = []
@@ -370,6 +371,7 @@ def compute_series_arrays(
         else:
             raise ValueError(f"Unsupported mode: {mode}")
 
+        step_ids.append(int(k))
         x_list.append(log_a)
         y_list.append(val)
         y_err_list.append(val_std)
@@ -377,6 +379,7 @@ def compute_series_arrays(
         dt_std_list.append(dt_std)
 
     return (
+        step_ids,
         np.array(x_list, dtype=float),
         np.array(y_list, dtype=float),
         np.array(y_err_list, dtype=float),
@@ -421,6 +424,98 @@ def linear_fit_with_r2(
     )
 
 
+def print_terminal_summaries(
+    parsed_series: Dict[str, Tuple[List[int], np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]],
+    fit_summaries: List[dict],
+    lj_datapoints: List[Tuple[int, float, float, float]],
+    lj_fit_info: Optional[dict],
+    mode: str,
+) -> None:
+    """
+    Prints formatted summary tables of all datapoints (x, y, SD) and all
+    ordinary least-squares linear fits to the terminal.
+    """
+    y_unit = "mV" if mode == "delta_e" else "mV/°C"
+    y_header = f"Delta E [{y_unit}]" if mode == "delta_e" else f"Sensitivity [{y_unit}]"
+    lj_x_header = "log10(a_Cl-)" if X_METRIC.lower() == "activity" else "log10([Cl-])"
+
+    sep_wide = "=" * 84
+    sep_thin = "-" * 84
+
+    print("\n" + sep_wide)
+    print("DATAPOINTS SUMMARY (X, Y, AND STANDARD DEVIATION)")
+    print(sep_wide)
+
+    # 1. L.J. CP Datapoints
+    if lj_datapoints:
+        print(f"\n[Series: L.J. Reference OCP vs. {lj_x_header}]")
+        print(f"{'Step':>6} | {lj_x_header:>14} | {'L.J. CP Mean [mV]':>18} | {'L.J. CP SD [mV]':>16}")
+        print(sep_thin)
+        for step_id, x_val, y_mean, y_sd in lj_datapoints:
+            print(f"{step_id:>6d} | {x_val:>14.4f} | {y_mean:>18.4f} | {y_sd:>16.4f}")
+
+    # 2. Thermoelectric Series Datapoints
+    for series_key in SERIES_ORDER:
+        if series_key not in parsed_series:
+            continue
+        step_ids, x, y, y_err, dt_means, dt_stds = parsed_series[series_key]
+        print(f"\n[Series: Thermoelectric {series_key}]")
+        print(
+            f"{'Step':>6} | {'log10(a_Cl-)':>14} | {y_header:>18} | "
+            f"{'SD [' + y_unit + ']':>14} | {'Delta T [°C]':>18}"
+        )
+        print(sep_thin)
+        for s_id, x_val, y_val, y_sd, dt_m, dt_s in zip(
+            step_ids, x, y, y_err, dt_means, dt_stds
+        ):
+            dt_str = f"{dt_m:.2f} ± {dt_s:.2f}"
+            print(
+                f"{s_id:>6d} | {x_val:>14.4f} | {y_val:>18.4f} | "
+                f"{y_sd:>14.4f} | {dt_str:>18}"
+            )
+
+    print("\n" + sep_wide)
+    print("LINEAR REGRESSION FITS SUMMARY (y = m * x + b)")
+    print(sep_wide)
+    print(
+        f"{'Series':<14} | {'Slope ± SE':<22} | {'Intercept ± SE':<22} | "
+        f"{'R^2':>7} | {'RMSE':>8}"
+    )
+    print(sep_thin)
+
+    if lj_fit_info is not None:
+        slope_str = f"{lj_fit_info['slope']:.3f} ± {lj_fit_info['slope_se']:.3f}"
+        int_str = f"{lj_fit_info['intercept']:.3f} ± {lj_fit_info['intercept_se']:.3f}"
+        print(
+            f"{'L.J. CP':<14} | {slope_str:<22} | {int_str:<22} | "
+            f"{lj_fit_info['r2']:>7.4f} | {lj_fit_info['rmse']:>8.4f}"
+        )
+
+    for info in fit_summaries:
+        slope_str = f"{info['slope']:.3f} ± {info['slope_se']:.3f}"
+        int_str = f"{info['intercept']:.3f} ± {info['intercept_se']:.3f}"
+        print(
+            f"{info['series']:<14} | {slope_str:<22} | {int_str:<22} | "
+            f"{info['r2']:>7.4f} | {info['rmse']:>8.4f}"
+        )
+
+    # Derived physical metrics summary
+    print(sep_thin)
+    if lj_fit_info is not None:
+        nernst_eff = (lj_fit_info["slope"] / NERNST_SLOPE_25C) * 100.0
+        print(
+            f"L.J. CP Nernstian Efficiency (vs. {NERNST_SLOPE_25C:.2f} mV/dec): "
+            f"{nernst_eff:.2f}%"
+        )
+    for info in fit_summaries:
+        if "delta_t_theo" in info:
+            print(
+                f"Thermo {info['series']:<4} Slope-Derived Delta T_theo: "
+                f"{info['delta_t_theo']:.3f} ± {info['delta_t_theo_se']:.3f} °C"
+            )
+    print(sep_wide + "\n")
+
+
 def plot_lj_cp_subplot(
     ax: plt.Axes,
     all_metrics: dict,
@@ -429,7 +524,16 @@ def plot_lj_cp_subplot(
     step_std_devs: Dict[int, float],
     hollow_markers: bool = False,
     y_fmt: str = LJ_CP_Y_FMT,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, str]:
+) -> Tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    float,
+    str,
+    List[Tuple[int, float, float, float]],
+    Optional[dict],
+]:
     """
     Renders the continuous full-titration L.J. CP time series (in hours) with
     compact red-tinted rectangular boxes around the averaging window data,
@@ -437,7 +541,8 @@ def plot_lj_cp_subplot(
     and places Average L.J. CP vs. log10(Metric) with an OLS fit line, a
     frameless legend, and a configurable theoretical Nernst slope triangle
     inside an inset window in the bottom-right corner.
-    Returns (log_x, std_cp, residuals_fit, residuals_ideal, lj_fit_slope, x_label_str) for Figure 2.
+    Returns (log_x, std_cp, residuals_fit, residuals_ideal, lj_fit_slope, x_label_str,
+    lj_datapoints, lj_fit_info).
     """
     steps_sorted = sorted(step_averages.keys())
 
@@ -446,6 +551,7 @@ def plot_lj_cp_subplot(
     else:
         x_label_str = r"$\log_{10}([\mathrm{Cl}^-])$"
 
+    valid_steps = []
     log_x = []
     avg_cp = []
     std_cp = []
@@ -458,6 +564,7 @@ def plot_lj_cp_subplot(
                 f"'{METRICS_JSON_PATH}', skipping step in L.J. CP subplot."
             )
             continue
+        valid_steps.append(step_id)
         log_x.append(x_val)
         avg_cp.append(step_averages[step_id])
         std_cp.append(step_std_devs[step_id])
@@ -465,6 +572,9 @@ def plot_lj_cp_subplot(
     log_x = np.array(log_x, dtype=float)
     avg_cp = np.array(avg_cp, dtype=float)
     std_cp = np.array(std_cp, dtype=float)
+
+    lj_datapoints = list(zip(valid_steps, log_x.tolist(), avg_cp.tolist(), std_cp.tolist()))
+    lj_fit_info: Optional[dict] = None
 
     residuals_fit = np.zeros_like(avg_cp)
     residuals_ideal = np.zeros_like(avg_cp)
@@ -481,6 +591,16 @@ def plot_lj_cp_subplot(
 
         y_pred_fit = slope * log_x + intercept
         residuals_fit = avg_cp - y_pred_fit
+        rmse_fit = float(np.sqrt(np.mean(residuals_fit ** 2)))
+
+        lj_fit_info = {
+            "slope": slope,
+            "slope_se": float(res.stderr),
+            "intercept": intercept,
+            "intercept_se": float(res.intercept_stderr),
+            "r2": r_squared,
+            "rmse": rmse_fit,
+        }
 
         x_mean = np.mean(log_x)
         y_mean = np.mean(avg_cp)
@@ -706,7 +826,16 @@ def plot_lj_cp_subplot(
         ax_inset.grid(True, linestyle=":", color="#cbd5e1", alpha=0.75)
         ax_inset.yaxis.set_major_formatter(ticker.FormatStrFormatter(y_fmt))
 
-    return log_x, std_cp, residuals_fit, residuals_ideal, slope, x_label_str
+    return (
+        log_x,
+        std_cp,
+        residuals_fit,
+        residuals_ideal,
+        slope,
+        x_label_str,
+        lj_datapoints,
+        lj_fit_info,
+    )
 
 
 def generate_merged_figures(
@@ -768,7 +897,7 @@ def generate_merged_figures(
         if series_key not in all_metrics:
             print(f"Warning: '{series_key}' not found in metrics JSON, skipping.")
             continue
-        x, y, y_err, dt_means, dt_stds = compute_series_arrays(
+        step_ids, x, y, y_err, dt_means, dt_stds = compute_series_arrays(
             all_metrics[series_key]["step_summaries"],
             mode=mode,
             steps_to_include=steps_to_include,
@@ -778,7 +907,7 @@ def generate_merged_figures(
                 f"Warning: No matching steps found for '{series_key}' with filter {steps_to_include}, skipping."
             )
             continue
-        parsed_series[series_key] = (x, y, y_err, dt_means, dt_stds)
+        parsed_series[series_key] = (step_ids, x, y, y_err, dt_means, dt_stds)
         x_min_global = min(x_min_global, float(np.min(x)))
         x_max_global = max(x_max_global, float(np.max(x)))
 
@@ -794,11 +923,12 @@ def generate_merged_figures(
     n_series = len(active_keys)
 
     total_res_groups = n_series + 2
-    sample_x = parsed_series[active_keys[0]][0]
+    sample_x = parsed_series[active_keys[0]][1]
     min_dx = float(np.min(np.diff(np.sort(sample_x)))) if len(sample_x) > 1 else 0.1
     bar_width = (min_dx * 0.78) / max(total_res_groups, 1)
 
     fit_annotations = []
+    fit_summaries: List[dict] = []
     ax_res.axhline(0.0, color="#111827", linestyle="-", linewidth=1.1, alpha=0.85, zorder=2)
     ax_res_norm.axhline(0.0, color="#111827", linestyle="-", linewidth=1.1, alpha=0.85, zorder=2)
 
@@ -811,7 +941,7 @@ def generate_merged_figures(
     nernst_inv_factor = (1e-3 * F_FARADAY) / (np.log(10.0) * R_GAS)
 
     for idx, series_key in enumerate(active_keys):
-        x, y, y_err, dt_means, dt_stds = parsed_series[series_key]
+        step_ids, x, y, y_err, dt_means, dt_stds = parsed_series[series_key]
         style = SERIES_STYLES[series_key]
         point_color = style["point_color"]
         fit_color = style["fit_color"]
@@ -821,9 +951,24 @@ def generate_merged_figures(
 
         slope, slope_se, intercept, intercept_se, r2, _, residuals = linear_fit_with_r2(x, y)
         y_fit_grid = slope * x_fit_grid + intercept
+        rmse = float(np.sqrt(np.mean(residuals ** 2)))
 
         delta_t_theo = abs(slope) * nernst_inv_factor
         delta_t_theo_se = slope_se * nernst_inv_factor
+
+        fit_summary_entry = {
+            "series": f"Thermo {series_key}",
+            "slope": slope,
+            "slope_se": slope_se,
+            "intercept": intercept,
+            "intercept_se": intercept_se,
+            "r2": r2,
+            "rmse": rmse,
+        }
+        if mode == "delta_e":
+            fit_summary_entry["delta_t_theo"] = delta_t_theo
+            fit_summary_entry["delta_t_theo_se"] = delta_t_theo_se
+        fit_summaries.append(fit_summary_entry)
 
         theo_temp_vals.append(delta_t_theo)
         theo_temp_errs.append(delta_t_theo_se)
@@ -918,6 +1063,7 @@ def generate_merged_figures(
             zorder=3,
         )
 
+
     # Display Linear Fit Equations & R^2 Labels in Upper Right of Right Subplot
     box_x, box_y_start = 0.97, 0.96
     line_spacing = 0.062
@@ -948,7 +1094,16 @@ def generate_merged_figures(
     # ==========================================
     # Formatting - Merged Figure 1 (Left: L.J. CP | Right: Thermoelectric Delta E)
     # ==========================================
-    lj_log_x, lj_std_cp, lj_res_fit, lj_res_ideal, lj_slope, lj_x_label = plot_lj_cp_subplot(
+    (
+        lj_log_x,
+        lj_std_cp,
+        lj_res_fit,
+        lj_res_ideal,
+        lj_slope,
+        lj_x_label,
+        lj_datapoints,
+        lj_fit_info,
+    ) = plot_lj_cp_subplot(
         ax=ax_ljcp,
         all_metrics=all_metrics,
         df_titration=df_titration,
@@ -956,6 +1111,15 @@ def generate_merged_figures(
         step_std_devs=step_std_devs,
         hollow_markers=hollow_markers,
         y_fmt=lj_y_fmt,
+    )
+
+    # Print datapoints and fit summaries to terminal
+    print_terminal_summaries(
+        parsed_series=parsed_series,
+        fit_summaries=fit_summaries,
+        lj_datapoints=lj_datapoints,
+        lj_fit_info=lj_fit_info,
+        mode=mode,
     )
 
     ax_main.set_xlabel(
