@@ -1,0 +1,659 @@
+from dataclasses import dataclass
+import json
+import math
+import os
+from typing import Dict, List, Optional, Tuple
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import matplotlib.transforms as mtransforms
+import numpy as np
+import pandas as pd
+
+
+# ==========================================
+# 1. Data Structure Definition
+# ==========================================
+@dataclass
+class Pulse:
+    pulse_index: int
+    loop_type: str  # 'closed-loop'
+    time_on_s: float
+    time_off_s: float
+    ambient_temp_setpoint_c: float
+    max_current_a: float
+    step: int  # Step index from CSV data
+    data: pd.DataFrame
+    calculated_ambient_temp_c: Optional[float] = None
+    delta_temp_target_c: Optional[float] = None
+
+    temp_last_on: Optional[float] = None
+    temp_last_off: Optional[float] = None
+    cp_last_on: Optional[float] = None
+    cp_last_off: Optional[float] = None
+
+    def __post_init__(self):
+        """Ensures numeric metadata fields are strictly typed regardless of input source."""
+        self.time_on_s = float(self.time_on_s)
+        self.time_off_s = float(self.time_off_s)
+        self.ambient_temp_setpoint_c = (
+            float(self.ambient_temp_setpoint_c)
+            if self.ambient_temp_setpoint_c is not None
+            else None
+        )
+        self.max_current_a = float(self.max_current_a)
+        self.step = int(self.step)
+        if self.calculated_ambient_temp_c is not None:
+            self.calculated_ambient_temp_c = float(
+                self.calculated_ambient_temp_c
+            )
+        if self.delta_temp_target_c is not None:
+            self.delta_temp_target_c = float(self.delta_temp_target_c)
+
+    def extract_end_points(self):
+        """Extracts temperature and potential values at the end of ON and OFF periods."""
+        df = self.data
+        rel_time = (
+            pd.to_datetime(df["datetime"]) - pd.to_datetime(df["datetime"].iloc[0])
+        ).dt.total_seconds()
+
+        idx_on = (rel_time - self.time_on_s).abs().idxmin()
+        idx_off = len(df) - 1
+
+        self.temp_last_on = float(df["temperature"].iloc[idx_on])
+        self.temp_last_off = float(df["temperature"].iloc[idx_off])
+
+        cp_col = "cp_zeroed" if "cp_zeroed" in df.columns else "AgCl CP"
+        self.cp_last_on = float(df[cp_col].iloc[idx_on])
+        self.cp_last_off = float(df[cp_col].iloc[idx_off])
+
+    def to_dict(self) -> dict:
+        """Converts metadata and DataFrame time series to a JSON-serializable dictionary."""
+        return {
+            "pulse_index": self.pulse_index,
+            "loop_type": self.loop_type,
+            "metadata": {
+                "time_on_s": self.time_on_s,
+                "time_off_s": self.time_off_s,
+                "ambient_temp_setpoint_c": self.ambient_temp_setpoint_c,
+                "calculated_ambient_temp_c": self.calculated_ambient_temp_c,
+                "max_current_a": self.max_current_a,
+                "step": self.step,
+                "delta_temp_target_c": self.delta_temp_target_c,
+                "temp_last_on": self.temp_last_on,
+                "temp_last_off": self.temp_last_off,
+                "cp_last_on": self.cp_last_on,
+                "cp_last_off": self.cp_last_off,
+            },
+            "time_series": self.data.to_dict(orient="list"),
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Pulse":
+        """Reconstructs a Pulse object from a JSON dictionary."""
+        meta = data.get("metadata", {})
+        ts_data = data.get("time_series", {})
+
+        df = pd.DataFrame(ts_data)
+        if "datetime" in df.columns and not pd.api.types.is_numeric_dtype(df["datetime"]):
+            df["datetime"] = pd.to_datetime(df["datetime"])
+
+        return cls(
+            pulse_index=data.get("pulse_index", 0),
+            loop_type=data.get("loop_type", "closed-loop"),
+            time_on_s=meta.get("time_on_s", 120.0),
+            time_off_s=meta.get("time_off_s", 120.0),
+            ambient_temp_setpoint_c=meta.get("ambient_temp_setpoint_c", 25.0),
+            max_current_a=meta.get("max_current_a", 1.0),
+            step=meta.get("step", 0),
+            calculated_ambient_temp_c=meta.get("calculated_ambient_temp_c"),
+            delta_temp_target_c=meta.get("delta_temp_target_c"),
+            temp_last_on=meta.get("temp_last_on"),
+            temp_last_off=meta.get("temp_last_off"),
+            cp_last_on=meta.get("cp_last_on"),
+            cp_last_off=meta.get("cp_last_off"),
+            data=df,
+        )
+
+
+# ==========================================
+# Thermodynamic Activity Calculation (Davies Equation)
+# ==========================================
+def calculate_chloride_activity(
+    concentration_m: float,
+    temp_c: float = 25.0,
+    z: int = -1,
+    davies_b: float = 0.30,
+) -> dict:
+    """
+    Calculates single-ion chloride activity and log10(activity) in an aqueous
+    1:1 electrolyte (e.g., NaCl / KCl) using the Davies equation.
+
+    References:
+    1. Davies, C. W. (1962). Ion Association. London: Butterworths, pp. 39-41.
+       (Empirical linear parameter b = 0.30 at 25 C).
+    2. Malmberg, C. G., & Maryott, A. A. (1956). Dielectric constant of water from 0 to 100 C.
+       Journal of Research of the National Bureau of Standards, 56(1), 1-8.
+    3. Robinson, R. A., & Stokes, R. H. (2002). Electrolyte Solutions (2nd rev. ed.).
+       Dover Publications (Debye-Huckel A parameter = 1.8248e6 * (eps_r * T)^(-3/2)).
+    """
+    t_k = temp_c + 273.15
+
+    # Static relative permittivity (dielectric constant) of pure water (Malmberg & Maryott, 1956)
+    eps_r = (
+        87.740
+        - 0.40008 * temp_c
+        + 9.398e-4 * (temp_c ** 2)
+        - 1.410e-6 * (temp_c ** 3)
+    )
+
+    # Temperature-dependent Debye-Huckel limiting slope A [(kg/mol)^(1/2) ~ (L/mol)^(1/2) in dilute water]
+    # Standard value at 25.0 C (298.15 K, eps_r = 78.30): A = 0.5092
+    dh_a = 1.824829e6 * ((eps_r * t_k) ** -1.5)
+
+    # For a completely dissociated 1:1 strong electrolyte (|z+| = |z-| = 1),
+    # ionic strength I = 0.5 * (c * 1^2 + c * (-1)^2) = c
+    ionic_strength = float(concentration_m)
+    sqrt_i = math.sqrt(ionic_strength)
+
+    # Davies equation for log10(gamma_i)
+    log_gamma = -dh_a * (z ** 2) * ((sqrt_i / (1.0 + sqrt_i)) - davies_b * ionic_strength)
+    gamma = 10.0 ** log_gamma
+
+    # Single-ion activity: a_Cl = gamma_Cl * (c_Cl / c_0), where c_0 = 1 M standard state
+    activity = gamma * concentration_m
+    log_activity = math.log10(activity)
+
+    return {
+        "ionic_strength_m": round(ionic_strength, 6),
+        "activity_coefficient": round(gamma, 6),
+        "activity": round(activity, 6),
+        "log_activity": round(log_activity, 6),
+    }
+
+
+# ==========================================
+# Manual Plot & Step Metadata Configurations
+# ==========================================
+JSON_FILES = [
+    "1C_filtered_pulses.json",
+    "5C_filtered_pulses.json",
+    "10C_filtered_pulses.json",
+]
+
+COMBINED_METRICS_OUTPUT = "all_pulse_metrics.json"
+
+STEP_TABLE_SOURCE_URL = (
+    "https://docs.google.com/spreadsheets/d/1oRdWZKsmPEwt66wsF2v-iKb4raNI_R9KoyZY7_tnya8/edit?usp=sharing"
+)
+
+# Lookup table mapped by common "step" property
+# Source: https://docs.google.com/spreadsheets/d/1oRdWZKsmPEwt66wsF2v-iKb4raNI_R9KoyZY7_tnya8/edit?usp=sharing
+STEP_TABLE_DATA: Dict[int, dict] = {
+    0:  {"concentration_g_kg": 0.58,  "concentration_m": 0.0100, "log_m": -2.000, "net_volume_l": 0.250, "dilutions_l": 0.000},
+    1:  {"concentration_g_kg": 0.98,  "concentration_m": 0.0168, "log_m": -1.776, "net_volume_l": 0.251, "dilutions_l": 0.001},
+    2:  {"concentration_g_kg": 1.76,  "concentration_m": 0.0301, "log_m": -1.521, "net_volume_l": 0.253, "dilutions_l": 0.002},
+    3:  {"concentration_g_kg": 2.91,  "concentration_m": 0.0498, "log_m": -1.303, "net_volume_l": 0.256, "dilutions_l": 0.003},
+    4:  {"concentration_g_kg": 5.84,  "concentration_m": 0.1000, "log_m": -1.000, "net_volume_l": 0.264, "dilutions_l": 0.008},
+    5:  {"concentration_g_kg": 11.84, "concentration_m": 0.2025, "log_m": -0.694, "net_volume_l": 0.282, "dilutions_l": 0.018},
+    6:  {"concentration_g_kg": 17.66, "concentration_m": 0.3021, "log_m": -0.520, "net_volume_l": 0.302, "dilutions_l": 0.020},
+    7:  {"concentration_g_kg": 23.47, "concentration_m": 0.4015, "log_m": -0.396, "net_volume_l": 0.325, "dilutions_l": 0.023},
+    8:  {"concentration_g_kg": 29.12, "concentration_m": 0.4982, "log_m": -0.303, "net_volume_l": 0.351, "dilutions_l": 0.026},
+    9:  {"concentration_g_kg": 35.02, "concentration_m": 0.5992, "log_m": -0.222, "net_volume_l": 0.383, "dilutions_l": 0.032},
+    10: {"concentration_g_kg": 40.86, "concentration_m": 0.6992, "log_m": -0.155, "net_volume_l": 0.421, "dilutions_l": 0.038},
+}
+
+# Independent manual Y-axis limits per dataset prefix ("1C", "5C", "10C")
+# Adjust (min, max) tuples and optional ticks as desired for each figure.
+DATASET_Y_LIMITS: Dict[str, dict] = {
+    "1C": {
+        "temp_ylim": (24.5, 28.0),
+        "pwr_ylim": (-4.0, 2.5),
+        "cp_ylim": (-0.3, 1.8),
+        # "cp_yticks": [-1.0, 0.0, 2.0, 4.0],  # Optional explicit ticks
+    },
+    "5C": {
+        "temp_ylim": (24.0, 35.0),
+        "pwr_ylim": (-4.0, 2.5),
+        "cp_ylim": (-1.0, 8.0),
+        # "cp_yticks": [-1.0, 0.0, 4.0, 8.0],
+    },
+    "10C": {
+        "temp_ylim": (24.0, 44.0),
+        "pwr_ylim": (-4.0, 2.5),
+        "cp_ylim": (-1.0, 14.0),
+        # "cp_yticks": [-1.0, 0.0, 7.0, 14.0],
+    },
+}
+
+# Optional: Map step indices (0..10) to custom legend labels (e.g., concentrations).
+# Any step not listed here will default to f"Step {s}".
+STEP_LABEL_MAP: Dict[int, str] = {
+    # 0: "0.01 [M]",
+    # 1: "0.05 [M]",
+    # ...
+}
+
+# Optional: Override specific step (x, y) normalized axes coordinates for Delta E annotations
+MANUAL_TEXT_OVERRIDES: Dict[int, Tuple[float, float]] = {}
+
+
+def generate_pulse_figure(
+    json_filepath: str,
+    output_filepath: str,
+    ylim_config: Optional[dict] = None,
+) -> dict:
+    ylim_config = ylim_config or {}
+
+    # ==========================================
+    # 2. Data Processing & Per-Step Baseline Correction
+    # ==========================================
+    with open(json_filepath, "r") as f:
+        pulses_json = json.load(f)
+
+    pulse_objects = []
+    for p_dict in pulses_json:
+        p = Pulse.from_dict(p_dict)
+
+        dt = pd.to_datetime(p.data["datetime"])
+        rel_t = (dt - dt.iloc[0]).dt.total_seconds()
+        max_t = rel_t.iloc[-1]
+
+        # Baseline correction for AgCl CP based on final 10 seconds of pulse
+        baseline_cp = np.mean(p.data["AgCl CP"][rel_t >= (max_t - 10.0)])
+        p.data["cp_zeroed"] = p.data["AgCl CP"] - baseline_cp
+
+        p.extract_end_points()
+        pulse_objects.append(p)
+
+    # Global Temperature Stats (used for Subplot 1 annotations & ticks)
+    t_on_list = [float(p.temp_last_on) for p in pulse_objects]
+    t_off_list = [float(p.temp_last_off) for p in pulse_objects]
+    delta_temp_list = [float(p.temp_last_on - p.temp_last_off) for p in pulse_objects]
+
+    t_on_mean, t_on_std = float(np.mean(t_on_list)), float(np.std(t_on_list))
+    t_off_mean, t_off_std = float(np.mean(t_off_list)), float(np.std(t_off_list))
+    delta_temp_mean = float(np.mean(delta_temp_list))
+    delta_temp_std = float(np.std(delta_temp_list))
+
+    # Group Pulses by Step for Cell Potential Stats
+    steps = sorted(list(set(p.step for p in pulse_objects)))
+    step_stats = {}
+
+    for s in steps:
+        s_pulses = [p for p in pulse_objects if p.step == s]
+        cp_on_vals = [float(p.cp_last_on) for p in s_pulses]
+        cp_off_vals = [float(p.cp_last_off) for p in s_pulses]
+        delta_cp_vals = [float(p.cp_last_on - p.cp_last_off) for p in s_pulses]
+        s_delta_t_vals = [float(p.temp_last_on - p.temp_last_off) for p in s_pulses]
+        s_t_amb_vals = [float(p.temp_last_off) for p in s_pulses]
+
+        step_stats[s] = {
+            "pulses": s_pulses,
+            "t_amb_mean": float(np.mean(s_t_amb_vals)),
+            "cp_on_mean": float(np.mean(cp_on_vals)),
+            "cp_on_std": float(np.std(cp_on_vals)),
+            "cp_off_mean": float(np.mean(cp_off_vals)),
+            "cp_off_std": float(np.std(cp_off_vals)),
+            "delta_cp_mean": float(np.mean(delta_cp_vals)),
+            "delta_cp_std": float(np.std(delta_cp_vals)),
+            "delta_t_mean": float(np.mean(s_delta_t_vals)),
+            "delta_t_std": float(np.std(s_delta_t_vals)),
+        }
+
+    # ==========================================
+    # 2b. Build Pulse Metrics, Merge Step Table & Activity Data
+    # ==========================================
+    step_summaries = {}
+    for s, st in step_stats.items():
+        table_row = STEP_TABLE_DATA.get(int(s), {})
+        activity_metrics = (
+            calculate_chloride_activity(
+                concentration_m=table_row["concentration_m"],
+                temp_c=st["t_amb_mean"],
+            )
+            if "concentration_m" in table_row
+            else {}
+        )
+
+        step_summaries[str(s)] = {
+            "step": int(s),
+            **table_row,
+            **activity_metrics,
+            "pulse_count": len(st["pulses"]),
+            "delta_e_mean_mv": st["delta_cp_mean"],
+            "delta_e_std_mv": st["delta_cp_std"],
+            "e_on_mean_mv": st["cp_on_mean"],
+            "e_on_std_mv": st["cp_on_std"],
+            "e_off_mean_mv": st["cp_off_mean"],
+            "e_off_std_mv": st["cp_off_std"],
+            "delta_t_mean_c": st["delta_t_mean"],
+            "delta_t_std_c": st["delta_t_std"],
+        }
+
+    metrics_output = {
+        "source_file": json_filepath,
+        "concentration_table_source": STEP_TABLE_SOURCE_URL,
+        "activity_model": {
+            "equation": "Davies Equation",
+            "ion": "Cl- (z = -1)",
+            "electrolyte_assumption": "Completely dissociated 1:1 strong electrolyte (I = c)",
+            "davies_b_parameter": 0.30,
+            "reference_temperature_source": "Measured step baseline ambient temperature (temp_last_off)",
+        },
+        "step_summaries": step_summaries,
+    }
+
+    # Assign distinct shades of blue across all 11 steps
+    blue_shades = plt.cm.Blues(np.linspace(0.25, 0.95, len(steps)))
+    step_color_map = {s: blue_shades[i] for i, s in enumerate(steps)}
+
+    # ==========================================
+    # 3. Interpolation onto Common Time Grid for Mean & STD
+    # ==========================================
+    R_OHMS = 2.0
+    common_time = np.linspace(-60, 180, 241)  # 1-second resolution
+
+    temp_matrix = []
+    pwr_matrix = []
+    step_cp_matrices = {s: [] for s in steps}
+
+    for p in pulse_objects:
+        rel_time = (
+            pd.to_datetime(p.data["datetime"]) - pd.to_datetime(p.data["datetime"].iloc[0])
+        ).dt.total_seconds()
+
+        shifted_time = np.where(rel_time >= 180.0, rel_time - 240.0, rel_time)
+        sort_idx = np.argsort(shifted_time)
+        t_sorted = shifted_time[sort_idx]
+
+        temp_sorted = p.data["temperature"].iloc[sort_idx].values
+        cp_sorted = p.data["cp_zeroed"].iloc[sort_idx].values
+
+        # Interpolate Temperature & CP onto common_time
+        interp_temp = np.interp(common_time, t_sorted, temp_sorted)
+        interp_cp = np.interp(common_time, t_sorted, cp_sorted)
+
+        temp_matrix.append(interp_temp)
+        step_cp_matrices[p.step].append(interp_cp)
+
+        if "current" in p.data.columns:
+            current_sorted = p.data["current"].iloc[sort_idx].values
+            pwr_sorted_w = np.square(current_sorted / 1000.0) * R_OHMS
+            interp_pwr = np.interp(common_time, t_sorted, pwr_sorted_w)
+            pwr_matrix.append(interp_pwr)
+
+    # Compute Mean & STD arrays
+    temp_mean = np.mean(temp_matrix, axis=0)
+    temp_std = np.std(temp_matrix, axis=0)
+
+    if pwr_matrix:
+        pwr_mean = np.mean(pwr_matrix, axis=0)
+        pwr_std = np.std(pwr_matrix, axis=0)
+
+    # ==========================================
+    # 4. Plot Generation
+    # ==========================================
+    plt.rcdefaults()
+
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1,
+        sharex=True,
+        figsize=(16, 7.5),
+        gridspec_kw={"hspace": 0.55}  # Creates whitespace between ax1 and ax2
+    )
+
+    # Twin Y-axis for Power on Subplot 1
+    ax1_pwr = ax1.twinx()
+
+    # Overlay ax1_pwr directly on top of ax1's left spine (position = (0, 0))
+    ax1_pwr.spines["left"].set_position(("axes", 0))
+    ax1_pwr.spines["left"].set_visible(True)
+    ax1_pwr.spines["right"].set_visible(False)
+    ax1_pwr.yaxis.set_label_position("left")
+    ax1_pwr.yaxis.tick_left()
+
+    pcb_orange = "#f99e1a"
+    power_red = "#dc2626"
+
+    # 1. Plot Temperature Mean & Error Band on ax1 (Primary Left Axis, Orange)
+    ax1.plot(common_time, temp_mean, color=pcb_orange, linewidth=2.0, label="Temperature [°C]")
+    ax1.fill_between(
+        common_time,
+        temp_mean - temp_std,
+        temp_mean + temp_std,
+        color=pcb_orange,
+        alpha=0.25,
+        zorder=2,
+    )
+
+    # 2. Plot Power Mean & Error Band on ax1_pwr (Overlaid Left Axis, Red)
+    if pwr_matrix:
+        ax1_pwr.plot(common_time, pwr_mean, color=power_red, linewidth=1.5, label="Heater Power [W]")
+        ax1_pwr.fill_between(
+            common_time,
+            pwr_mean - pwr_std,
+            pwr_mean + pwr_std,
+            color=power_red,
+            alpha=0.20,
+            zorder=2,
+        )
+
+    # Max Power Horizontal Reference Line & Text Label at 1.71 W
+    ax1_pwr.axhline(1.71, color=power_red, linestyle="--", alpha=0.7, linewidth=1.2, zorder=3)
+    ax1_pwr.annotate(
+        "Max Power",
+        (0, 1.71),
+        textcoords="offset points",
+        xytext=(-10, 5),
+        ha="left",
+        va="bottom",
+        fontsize=11,
+        fontweight="bold",
+        color=power_red,
+    )
+
+    # 3. Plot AgCl CP Mean & Error Band per Step on ax2 (Blue Shades by Step)
+    for s in steps:
+        s_color = step_color_map[s]
+        cp_mat = np.array(step_cp_matrices[s])
+        cp_mean = np.mean(cp_mat, axis=0)
+        cp_std = np.std(cp_mat, axis=0)
+
+        label_text = STEP_LABEL_MAP.get(s, f"Step {s}")
+        ax2.plot(common_time, cp_mean, color=s_color, linewidth=1.8, label=label_text)
+        ax2.fill_between(
+            common_time,
+            cp_mean - cp_std,
+            cp_mean + cp_std,
+            color=s_color,
+            alpha=0.20,
+            zorder=2,
+        )
+
+    # Shaded Phase Windows
+    windows = [(-60, 0, "#bfdbfe"), (0, 120, "#fee2e2"), (120, 180, "#bfdbfe")]
+
+    for start, end, bg_color in windows:
+        for ax in (ax1, ax2):
+            ax.axvspan(start, end, color=bg_color, alpha=0.5, zorder=0)
+            ax.axvline(start, color="gray", linestyle="--", alpha=0.6, linewidth=0.8)
+            ax.axvline(end, color="gray", linestyle="--", alpha=0.6, linewidth=0.8)
+
+    # Temperature Reference Lines & Error Bars (on ax1)
+    ax1.axhline(t_on_mean, color=pcb_orange, linestyle="--", alpha=0.6, linewidth=1, zorder=3)
+    ax1.axhline(t_off_mean, color=pcb_orange, linestyle="--", alpha=0.6, linewidth=1, zorder=3)
+
+    ax1.errorbar(120.0, t_on_mean, yerr=t_on_std, fmt="o", color="black", ecolor="black", capsize=4, capthick=1.2, elinewidth=1.2, markersize=5, zorder=5)
+    ax1.errorbar(0.0, t_off_mean, yerr=t_off_std, fmt="o", color="black", ecolor="black", capsize=4, capthick=1.2, elinewidth=1.2, markersize=5, zorder=5)
+
+    ax1.annotate(rf"$T_{{hot}}$", (120.0, t_on_mean), textcoords="offset points", xytext=(-10, 10), ha="right", va="bottom", fontsize=14, fontweight="bold", color=pcb_orange)
+    ax1.annotate(rf"$T_{{amb.}}$", (0.0, t_off_mean), textcoords="offset points", xytext=(-10, 10), ha="right", va="bottom", fontsize=14, fontweight="bold", color=pcb_orange)
+
+    # Per-Step AgCl CP Reference Lines & Error Bars
+    for i, s in enumerate(steps):
+        st = step_stats[s]
+        s_color = step_color_map[s]
+        x_off = 0
+
+        # Reference Lines
+        ax2.axhline(st["cp_on_mean"], color=s_color, linestyle="--", alpha=0.45, linewidth=0.8, zorder=3)
+        ax2.axhline(st["cp_off_mean"], color=s_color, linestyle="--", alpha=0.45, linewidth=0.8, zorder=3)
+
+        # Individual Error Bars per Step
+        ax2.errorbar(
+            120.0 + x_off, st["cp_on_mean"], yerr=st["cp_on_std"],
+            fmt="o", color="black", ecolor="black", capsize=4, capthick=1.2, elinewidth=1.2, markersize=5, zorder=5
+        )
+        ax2.errorbar(
+            0.0 + x_off, st["cp_off_mean"], yerr=st["cp_off_std"],
+            fmt="o", color="black", ecolor="black", capsize=4, capthick=1.2, elinewidth=1.2, markersize=5, zorder=5
+        )
+
+    # Summary Box Annotations for Subplot 1
+    ax1.text(
+        0.55, 0.3,
+        rf"$\Delta T_{{hot-amb.}} = {delta_temp_mean:.2f} \pm {delta_temp_std:.2f}\ ^\circ\mathrm{{C}}$",
+        transform=ax1.transAxes, fontsize=15, fontweight="bold", color=pcb_orange,
+        va="top", ha="center",
+    )
+
+    # ==========================================
+    # Independent Text Box Placement for Subplot 2 (11-Step Layout)
+    # ==========================================
+    ax2_text_positions = {}
+    mid_idx = (len(steps) + 1) // 2
+    for idx, s in enumerate(steps):
+        if idx < mid_idx:
+            x_pos = 0.13
+            y_pos = 0.94 - idx * 0.145
+        else:
+            x_pos = 0.87
+            y_pos = 0.94 - (idx - mid_idx) * 0.145
+        ax2_text_positions[s] = (x_pos, y_pos)
+
+    ax2_text_positions.update(MANUAL_TEXT_OVERRIDES)
+
+    for s, st in step_stats.items():
+        s_color = "black"  # step_color_map[s]
+        x_pos, y_pos = ax2_text_positions.get(s, (0.55, 0.45))
+
+        text_str = rf"S{s}: $\Delta E = {st['delta_cp_mean']:.2f} \pm {st['delta_cp_std']:.2f}\ \mathrm{{mV}}$"
+
+        ax2.text(
+            x_pos, y_pos,
+            text_str,
+            transform=ax2.transAxes, fontsize=9.5, fontweight="bold", color=s_color,
+            va="top", ha="center",
+        )
+
+    # Subplot 1 Primary Left Y-Axis Configuration (Temperature)
+    ax1.set_ylabel("Temperature [°C]", color=pcb_orange, fontweight="bold", fontsize=12)
+    ax1.tick_params(axis="y", colors=pcb_orange, labelcolor=pcb_orange)
+    ax1.spines["left"].set_color(pcb_orange)
+
+    default_upper_temp = max(36.0, math.ceil(t_on_mean + t_on_std + 2.0))
+    temp_ylim = ylim_config.get("temp_ylim", (24.0, default_upper_temp))
+    ax1.set_ylim(temp_ylim)
+    ax1.set_yticks([temp_ylim[0], t_off_mean, t_on_mean])
+    ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.1f"))
+
+    # Subplot 1 Overlaid Left Y-Axis Configuration (Power in Watts - 2 Lines)
+    ax1_pwr.set_ylabel("Heater\nPower [W]", color=power_red, fontweight="bold", fontsize=12, labelpad=15)
+    ax1_pwr.tick_params(axis="y", colors=power_red, labelcolor=power_red)
+    ax1_pwr.spines["left"].set_color(power_red)
+
+    # Scaling power axis limits and ticks in Watts [W]
+    ax1_power_ylim = ylim_config.get("pwr_ylim", (-4.0, 2.5))
+    ax1_power_yticks = [0.0, 0.5, 1.0, 1.71]
+
+    ax1_pwr.set_ylim(ax1_power_ylim)
+    ax1_pwr.set_yticks(ax1_power_yticks)
+    ax1_pwr.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.1f"))
+
+    # Subplot 2 Axis Configuration
+    ax2.set_ylabel("AgCl|AgCl Potential [mV]", color="#0284c7", fontweight="bold", fontsize=14)
+    ax2.tick_params(axis="y", colors="#bfdbfe", labelcolor="#0284c7")
+    ax2.spines["left"].set_color("#0284c7")
+    ax2.set_xlabel("Time [s]", fontsize=12)
+    ax2.yaxis.set_major_formatter(ticker.FormatStrFormatter("%.1f"))
+
+    plt.xlim(-60, 180)
+
+    # Set 60-second X-ticks interval [-60, 0, 60, 120, 180]
+    ax2.xaxis.set_major_locator(ticker.MultipleLocator(60))
+    ax1.tick_params(axis="x", labelbottom=True)
+
+    # Set Y-axis Limits & Formats for Subplot 2 (Cell Potential)
+    max_cp_peak = max(st["cp_on_mean"] + st["cp_on_std"] for st in step_stats.values())
+    default_upper_cp = max(8.0, math.ceil(max_cp_peak + 1.0))
+    cp_ylim = ylim_config.get("cp_ylim", (-1.0, default_upper_cp))
+    ax2.set_ylim(cp_ylim)
+
+    if "cp_yticks" in ylim_config:
+        ax2.set_yticks(ylim_config["cp_yticks"])
+    else:
+        sorted_means = sorted([st["cp_on_mean"] for st in step_stats.values()])
+        representative_ticks = [sorted_means[0], sorted_means[len(sorted_means) // 2], sorted_means[-1]]
+        ax2.set_yticks([0.0] + representative_ticks + [cp_ylim[1]])
+
+    # ==============================================================================
+    # Subplot 1 Y-Axis Label Vertical Positioning Configuration
+    # ==============================================================================
+    temp_label_x, temp_label_y = -0.05, 0.25  # Temperature axis label position
+    pwr_label_x, pwr_label_y = -0.045, 0.79   # Heater Power axis label position
+
+    ax1.yaxis.set_label_coords(temp_label_x, temp_label_y)
+    ax1_pwr.yaxis.set_label_coords(pwr_label_x, pwr_label_y)
+
+    # Phase Labels above ax1
+    trans_inter = mtransforms.blended_transform_factory(ax1.transData, ax1.transAxes)
+    phase_labels = [
+        (-30.0, "1. Baseline", "#3890fc"),
+        (60.0, "2. Heating", "#fc5050"),
+        (150.0, "3. Flushing", "#3890fc"),
+    ]
+
+    for x_time, label_text, textColor in phase_labels:
+        ax1.text(
+            x_time,
+            1.03,
+            label_text,
+            transform=trans_inter,
+            ha="center",
+            va="bottom",
+            fontsize=16,
+            fontweight="bold",
+            color=textColor,
+            clip_on=False,
+        )
+
+    plt.subplots_adjust(top=0.90, bottom=0.08, left=0.14)
+    plt.savefig(output_filepath, dpi=300, bbox_inches="tight")
+    plt.show()
+    plt.close(fig)
+
+    return metrics_output
+
+
+# ==========================================
+# 5. Execute for All JSON Files & Export Single Combined JSON
+# ==========================================
+if __name__ == "__main__":
+    all_metrics = {}
+
+    for json_file in JSON_FILES:
+        if not os.path.exists(json_file):
+            print(f"Skipping {json_file} (file not found).")
+            continue
+        prefix = json_file.split("_")[0]
+        out_png = f"pulse_sequence_{prefix}.png"
+        print(f"Generating {out_png} from {json_file}...")
+        all_metrics[prefix] = generate_pulse_figure(
+            json_file,
+            out_png,
+            ylim_config=DATASET_Y_LIMITS.get(prefix),
+        )
+
+    with open(COMBINED_METRICS_OUTPUT, "w") as combined_f:
+        json.dump(all_metrics, combined_f, indent=2)
+    print(f"Saved combined pulse metrics JSON to {COMBINED_METRICS_OUTPUT}")

@@ -1,6 +1,6 @@
 # Figure 4. Thermal Response Stability
 
-![Alt Text](delta_e_and_lj_cp_vs_log_activity.png)
+![Alt Text](delta_e_with_error_bands.png)
 
 
 ## Macro Selection and Parsing of Pulses (pulseParse.py)
@@ -15,4 +15,12 @@ Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data str
   <img src="selected_pulses.png" width="49%" />
 </p>
 
-## Pulse Filtering (pulseSelect.py)
+## Pulse Filtering and Endpoiont Calculation (pulseSelect.py)
+
+![Alt Text](all_windows_timeseries_overlay.png)
+
+<p float="left">
+  <img src="window_1_filtered_pulses_overlay.png" width="32%" />
+  <img src="window_2_filtered_pulses_overlay.png" width="32%" />
+  <img src="window_3_filtered_pulses_overlay.png" width="32%" />
+</p>
