@@ -1,5 +1,8 @@
 # Figure 3. Chloride Response
 
+![Alt Text](delta_e_and_lj_cp_vs_log_activity.png)
+
+
 ## Macro Selection and Parsing of Pulses (closedPulseParse.py)
 Raw serial text data (closed_loop_titration.txt) is parsed into a pulse data structure and saved ina JSON file format. Macro-selection allows for some high level selection of the dataset.
 
